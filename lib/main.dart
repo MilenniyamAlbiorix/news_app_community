@@ -10,7 +10,6 @@ import 'package:news_app_community/route/route.dart';
 import 'package:news_app_community/view/ui/notication/notifaction_screen.dart';
 
 void main() {
-
   Get.put(NewsController());
   runApp(const MyApp());
 }
@@ -21,12 +20,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      color: BaseColors.canvasColor,
+      color: BaseColors.whiteColor,
       getPages: AppPages.pages,
-      initialRoute: BaseRoute.homeScreen,
+      initialRoute: BaseRoute.searchScreen,
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home:  ScreenUtilInit(builder: (context, child) => const  NotificationScreen()),
+      home: ScreenUtilInit(
+          builder: (context, child) => const NotificationScreen()),
     );
   }
 }

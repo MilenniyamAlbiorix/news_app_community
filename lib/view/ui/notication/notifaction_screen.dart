@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:news_app_community/res/functions/base_funcations.dart';
 import '../../../res/const/strings.dart';
 import '../../../utils/widgets/gradientText.dart';

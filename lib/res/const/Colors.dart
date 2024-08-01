@@ -1,10 +1,12 @@
 import 'dart:ui';
 
-class BaseColors{
+class BaseColors {
 
   static  const Color hotUpdateNewsTxt =  Color(0xff121212);
   static  const Color backBtnColor =  Color(0xff2E0505);
+  static  const Color bluerColor =  Color(0xffF5F5F5);
   static  const Color colorBorder =  Color(0xffF0F1FA);
+  static  const Color filterTxtColor =  Color(0xff041E2F);
   static  const Color iconColor =  Color(0xff0080FF);
 
   static  const Color gradintOne =  Color(0xffFF3A44);
@@ -12,12 +14,14 @@ class BaseColors{
   static  const Color gradintTwo =  Color(0xffFF8086);
 
   static  const Color allOfficeTextColor =  Color(0xff484954);
-  static  const Color hintColor =  Color(0xff818181);
-  static  const Color imageBgColor =  Color(0xffE8F1FF);
-  static  const Color checkBoxColor =  Color(0xff10A711);
+
+  static  const Color newsbackbtnColor =  Color(0xff173418);
+
+
+
   static  const Color blackColors =  Color(0xff000000);
-  static  const Color  primaryColor =  Color(0xffFF3A44);
-  static  const Color backgroundColor =  Color(0xff0961F5);
+
+
   static  const Color  canvasColor =  Color(0xffF5F5F5);
   static  const Color   whiteColor =  Color(0xffFFFFFF);
   static  const Color   pinBorderColor =  Color(0xffB4BDC4);
