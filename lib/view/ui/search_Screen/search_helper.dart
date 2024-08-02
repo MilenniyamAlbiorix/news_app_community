@@ -6,17 +6,18 @@ import '../../../res/const/assets.dart';
 import '../../../res/const/strings.dart';
 import '../../../res/functions/base_funcations.dart';
 
-class  SearchHelper{
+class  SearchHelper {
 
   Widget searchListWidgets({required BuildContext context,required TextEditingController controller}){
     return  TextFormField(
-
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
         hintText: BaseStrings.search,
         suffixIcon: IconButton(
           icon: const Icon(Icons.close_rounded),
-          onPressed: () {},
+          onPressed: () {
+            controller.clear();
+          },
         ),
         hintStyle: getTheme(context: context)
             .textTheme
@@ -116,4 +117,5 @@ Widget filterListingView(){
       ),
     ).paddingSymmetric(vertical: 8.0);
 }
+
 }

@@ -1,36 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:news_app_community/res/functions/base_funcations.dart';
 import '../../../res/const/strings.dart';
+import '../../../res/functions/base_funcations.dart';
 import '../../../utils/widgets/gradientText.dart';
-import 'notificaton_listing_widgets.dart';
+import '../notication/notificaton_listing_widgets.dart';
 
-class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({super.key});
+class FavroiteScreen extends StatefulWidget {
+  const FavroiteScreen({super.key});
 
   @override
-  State<NotificationScreen> createState() => _NotificationScreenState();
+  State<FavroiteScreen> createState() => _FavroiteScreenState();
 }
 
-class _NotificationScreenState extends State<NotificationScreen> {
+class _FavroiteScreenState extends State<FavroiteScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return  Scaffold(
+      appBar:  AppBar(
+        automaticallyImplyLeading: false,
         systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarIconBrightness: Brightness.dark),
         elevation: 0,
         backgroundColor: Colors.transparent,
         centerTitle: true,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: const Icon(Icons.arrow_back_ios)),
+
         title: GradientText(
-          BaseStrings.hotUpdates,
+          BaseStrings.favoriteNews,
           style: getTheme(context: context)
               .textTheme
               .headlineLarge
@@ -46,11 +42,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ),
       ),
       body: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: 1,
               itemBuilder: (context, index) {
                 return notificationListing(context: context);
               },

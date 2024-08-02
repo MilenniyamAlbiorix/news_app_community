@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       color: BaseColors.whiteColor,
       getPages: AppPages.pages,
-      initialRoute: BaseRoute.searchScreen,
+      initialRoute: BaseRoute.bottomBarScreen,
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       home: ScreenUtilInit(

@@ -1,15 +1,12 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:news_app_community/controller/News%20Controller.dart';
-import 'package:news_app_community/res/const/assets.dart';
 import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/res/functions/base_funcations.dart';
 import 'package:news_app_community/utils/extensions/base_extensions.dart';
 import 'package:news_app_community/view/ui/search_Screen/search_helper.dart';
-
 import '../../../res/const/Colors.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -39,7 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         backgroundColor: BaseColors.whiteColor,
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         title: SizedBox(
             height: 32.h,
             child: searchHelper.searchListWidgets(
@@ -55,11 +52,14 @@ class _SearchScreenState extends State<SearchScreen> {
                   context: context,
                   builder: (BuildContext context) {
                     return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: const BoxDecoration(
-                          color: BaseColors.whiteColor,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(12),
-                              topLeft: Radius.circular(12))),
+                        color: BaseColors.whiteColor,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(12),
+                          topLeft: Radius.circular(12),
+                        ),
+                      ),
                       height: 300,
                       child: Center(
                         child: Column(
@@ -67,15 +67,27 @@ class _SearchScreenState extends State<SearchScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
+                            Center(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: BaseColors.bottomdivderColor,),
+                                alignment: Alignment.center,
+                                width: 72.w,
+                                height: 5.h,
+                              ),
+                            ),
+                            15.toVSB,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(BaseStrings.filter,
                                     style: getTheme(context: context)
                                         .textTheme
-                                        .titleMedium
+                                        .titleLarge
                                         ?.copyWith(
-                                            color: BaseColors.filterTxtColor)),
+                                        color: BaseColors.filterTxtColor,
+                                        fontSize: 22.sp)),
                                 ElevatedButton(
                                   style: ButtonStyle(
                                     alignment: Alignment.center,
@@ -84,63 +96,86 @@ class _SearchScreenState extends State<SearchScreen> {
                                     side: WidgetStateProperty.all(
                                         const BorderSide(color: Colors.black)),
                                     fixedSize: WidgetStateProperty.all(
-                                        Size(100.w, 32.w)),
+                                        Size(95.8.w, 32.w)),
                                   ),
                                   onPressed: () {
                                     newsController.selectedChips.clear();
                                   },
                                   child: Row(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Icon(
-                                        Icons.delete,
+                                        Icons.delete_outline_sharp,
                                         color: BaseColors.filterTxtColor,
-                                        size: 12.sp,
+                                        size: 16.sp,
                                       ),
-                                      8.toHSB,
+
                                       Text(BaseStrings.reset,
                                           style: getTheme(context: context)
                                               .textTheme
                                               .titleMedium
                                               ?.copyWith(
-                                                  fontSize: 12.sp,
-                                                  color: BaseColors
-                                                      .filterTxtColor)),
+                                              fontSize: 12.sp,
+                                              color: BaseColors
+                                                  .filterTxtColor)),
                                     ],
                                   ).paddingZero,
                                 ),
                               ],
-                            ).paddingSymmetric(horizontal: 12),
+                            ),
+                            20.toVSB,
                             Text(BaseStrings.sortBy,
+                                textAlign: TextAlign.left,
                                 style: getTheme(context: context)
                                     .textTheme
                                     .titleMedium
                                     ?.copyWith(
-                                        color: BaseColors.filterTxtColor)),
+                                    color: BaseColors.filterTxtColor,
+                                    fontSize: 14.sp)).paddingOnly(left: 12),
                             Obx(() {
                               return Wrap(
-                                spacing: 10.0,
+                                spacing: 7.0,
                                 children: chipLabels.map((label) {
                                   return ChoiceChip(
+                                    backgroundColor: Colors.white,
+                                    // Unselected background color
+                                    selectedColor: Colors.red,
                                     side: const BorderSide(
-                                      color: Colors.grey,
+                                      color: Color(0xffF0F1FA),
                                       width: 1.0,
                                     ),
-                                    showCheckmark: true,
-
-                                    label: Text(label),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          24.0), // Adjust the radius as needed
+                                    ),
+                                    showCheckmark: false,
+                                    label: Text(
+                                      label,
+                                      style: getTheme(context: context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                          color: BaseColors.filterTxtColor,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
+                                    ),
                                     selected: newsController.selectedChips
                                         .contains(label),
                                     onSelected: (bool selected) {
                                       newsController.selectMultiChip(label);
                                     },
-                                  ).paddingSymmetric(horizontal: 4);
+                                  );
                                 }).toList(),
                               );
                             }),
-                            Container(
+                            8.toVSB,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              }
+                              , child: Container(
                               width: Get.width,
                               height: 48.w,
                               decoration: BoxDecoration(
@@ -164,13 +199,14 @@ class _SearchScreenState extends State<SearchScreen> {
                                         .textTheme
                                         .titleMedium
                                         ?.copyWith(
-                                            fontSize: 16.sp,
-                                            color: BaseColors.whiteColor,
-                                            fontWeight: FontWeight.w800)),
+                                        fontSize: 16.sp,
+                                        color: BaseColors.whiteColor,
+                                        fontWeight: FontWeight.w800)),
                               ),
-                            ).paddingSymmetric(horizontal: 15),
+                            ),
+                            ),
                           ],
-                        ),
+                        ).paddingSymmetric(horizontal: 0),
                       ),
                     );
                   },
@@ -190,4 +226,6 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
     );
   }
+
+
 }

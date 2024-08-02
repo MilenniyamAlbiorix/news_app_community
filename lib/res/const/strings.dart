@@ -10,5 +10,6 @@ class BaseStrings {
   static const String reset ="Reset";
   static const String sortBy ="Sort By";
   static const String save ="SAVE";
+  static const String favoriteNews ="Favorite News";
 
 }

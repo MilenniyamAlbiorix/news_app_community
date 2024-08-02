@@ -7,6 +7,7 @@ import 'package:news_app_community/res/const/Colors.dart';
 import 'package:news_app_community/res/const/assets.dart';
 import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/res/functions/base_funcations.dart';
+import 'package:news_app_community/route/route.dart';
 import 'package:news_app_community/utils/extensions/base_extensions.dart';
 
 import 'carouselSlider_widgets.dart';
@@ -35,7 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 hintText: BaseStrings.search,
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),
-                  onPressed: () {},
+                  onPressed: () {
+
+                  },
                 ),
                 hintStyle: getTheme(context: context)
                     .textTheme
@@ -57,8 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           actions: [
-            Image.asset(BaseAssets.notifiationIcon)
-                .paddingSymmetric(horizontal: 15)
+            GestureDetector(
+              child: Image.asset(BaseAssets.notifiationIcon)
+                  .paddingSymmetric(horizontal: 15),
+              onTap: (){
+Get.toNamed(BaseRoute.notificationScreen);
+              },
+            ),
           ],
         ),
         body: Column(
@@ -78,28 +86,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.w700),
                   ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      "See All",
-                      style: getTheme(context: context)
-                          .textTheme
-                          .titleSmall
-                          ?.copyWith(color: BaseColors.iconColor),
-                    ),
-                    const Icon(
-                      Icons.arrow_forward,
-                      color: BaseColors.iconColor,
-                      size: 12,
-                    )
-                  ],
+                GestureDetector(
+                  onTap: ()=>Get.toNamed(BaseRoute.searchScreen),
+                  child: Row(
+                    children: [
+                      Text(
+                        "See All",
+                        style: getTheme(context: context)
+                            .textTheme
+                            .titleSmall
+                            ?.copyWith(color: BaseColors.iconColor),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward,
+                        color: BaseColors.iconColor,
+                        size: 12,
+                      )
+                    ],
+                  ),
                 ),
               ],
             ),
             10.toVSB,
             carouselSliderWidgets(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               child: SizedBox(
                 height: 32.h,
                 child: ListView.builder(
@@ -119,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: BaseColors.searchBarHintTextColor),
                               gradient: LinearGradient(
                                 colors:
-                                newsController.selectedIndex.value == index
+                                newsController.selectedCategory.value == index
                                     ? [
                                   BaseColors.gradintOne,
                                   BaseColors.gradintTwo,
@@ -142,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   color:
-                                  newsController.selectedIndex.value == index
+                                  newsController.selectedCategory.value == index
                                       ? BaseColors.whiteColor
                                       : BaseColors.backBtnColor, // Text color
                                 ),

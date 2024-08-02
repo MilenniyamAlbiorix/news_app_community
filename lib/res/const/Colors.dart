@@ -6,6 +6,7 @@ class BaseColors {
   static  const Color backBtnColor =  Color(0xff2E0505);
   static  const Color bluerColor =  Color(0xffF5F5F5);
   static  const Color colorBorder =  Color(0xffF0F1FA);
+  static  const Color bottomdivderColor =  Color(0xffC5C5C5);
   static  const Color filterTxtColor =  Color(0xff041E2F);
   static  const Color iconColor =  Color(0xff0080FF);
 
