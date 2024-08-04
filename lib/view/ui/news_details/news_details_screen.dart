@@ -81,7 +81,6 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
             if (scrollNotification.metrics.pixels < 250) {
               newsController.atEdge.value = false;
             }
-            //setState function
           }
           return true;
         },
@@ -221,63 +220,84 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
               ]),
             ),
           ),
+          // Positioned(
+          //   left: 16.0,
+          //   right: 16.0,
+          //   top: 180,
+          //   bottom: 0,
+          //
+          //   child: Opacity(opacity: percent,child:
+          //  )
+          //
+          // ),
           Positioned(
-            left: 16.0,
-            right: 16.0,
-            top: max(180, appBarSize - 20),
+            top: 180,
             bottom: 0,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16.0),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  width: 311.w,
-                  height:min(appBarSize, 200),
-                  decoration: BoxDecoration(
-                    color: BaseColors.bluerColor.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      width: 1.5,
-                      color: Colors.white.withOpacity(0.2),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16, top: 16, right: 16, bottom: 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Sunday, 9 May 2021",
-                          style: getTheme(context: context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                  color: BaseColors.backBtnColor,
-                                  fontSize: 12),
-                        ),
-                        Text(
-                          "Crypto investors should be prepared to lose all their money, BOE governor says",
-                          style: getTheme(context: context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                  color: BaseColors.backBtnColor,
-                                  fontSize: 16.sp),
-                        ),
-                        Text(
-                          "Published by Ryan Browne",
-                          style: getTheme(context: context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                color: BaseColors.backBtnColor,
-                                fontSize: 10,
+            child: Opacity(
+              opacity: percent,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Card(
+                  elevation: 2.0,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          child: Container(
+                            width: 311.w,
+                            height:min(appBarSize, 200),
+                            decoration: BoxDecoration(
+                              color: BaseColors.bluerColor.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                width: 1.5,
+                                color: Colors.white.withOpacity(0.2),
                               ),
+                            ),
+                            // child:
+                            // Padding(
+                            //   padding: const EdgeInsets.only(
+                            //       left: 16, top: 16, right: 16, bottom: 0),
+                            //   child: Column(
+                            //     mainAxisSize: MainAxisSize.min,
+                            //     crossAxisAlignment: CrossAxisAlignment.start,
+                            //     children: [
+                            //       Text(
+                            //         "Sunday, 9 May 2021",
+                            //         style: getTheme(context: context)
+                            //             .textTheme
+                            //             .titleMedium
+                            //             ?.copyWith(
+                            //             color: BaseColors.backBtnColor,
+                            //             fontSize: 12),
+                            //       ),
+                            //       Text(
+                            //         "Crypto investors should be prepared to lose all their money, BOE governor says",
+                            //         style: getTheme(context: context)
+                            //             .textTheme
+                            //             .titleMedium
+                            //             ?.copyWith(
+                            //             color: BaseColors.backBtnColor,
+                            //             fontSize: 16.sp),
+                            //       ),
+                            //       Text(
+                            //         "Published by Ryan Browne",
+                            //         style: getTheme(context: context)
+                            //             .textTheme
+                            //             .titleMedium
+                            //             ?.copyWith(
+                            //           color: BaseColors.backBtnColor,
+                            //           fontSize: 10,
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
+                      )),
                 ),
               ),
             ),
