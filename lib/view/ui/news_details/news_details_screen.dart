@@ -6,13 +6,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
-import 'package:news_app_community/controller/News%20Controller.dart';
+import 'package:news_app_community/viewModel/News%20Controller.dart';
 
 import 'package:news_app_community/res/const/assets.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../../../controller/News Controller.dart';
+import '../../../viewModel/News Controller.dart';
 import '../../../res/const/Colors.dart';
 import '../../../res/functions/base_funcations.dart';
 
@@ -167,7 +167,8 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
       child: Stack(
         children: [
           SizedBox(
-            height: appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize + 50,
+            height:
+                appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize + 50,
             child: Container(
               color: Colors.black26,
               child: Stack(alignment: Alignment.topCenter, children: [
@@ -220,16 +221,6 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
               ]),
             ),
           ),
-          // Positioned(
-          //   left: 16.0,
-          //   right: 16.0,
-          //   top: 180,
-          //   bottom: 0,
-          //
-          //   child: Opacity(opacity: percent,child:
-          //  )
-          //
-          // ),
           Positioned(
             top: 180,
             bottom: 0,
@@ -237,68 +228,64 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
               opacity: percent,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Card(
-                  elevation: 2.0,
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16.0),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                          child: Container(
-                            width: 311.w,
-                            height:min(appBarSize, 200),
-                            decoration: BoxDecoration(
-                              color: BaseColors.bluerColor.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                width: 1.5,
-                                color: Colors.white.withOpacity(0.2),
-                              ),
-                            ),
-                            // child:
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //       left: 16, top: 16, right: 16, bottom: 0),
-                            //   child: Column(
-                            //     mainAxisSize: MainAxisSize.min,
-                            //     crossAxisAlignment: CrossAxisAlignment.start,
-                            //     children: [
-                            //       Text(
-                            //         "Sunday, 9 May 2021",
-                            //         style: getTheme(context: context)
-                            //             .textTheme
-                            //             .titleMedium
-                            //             ?.copyWith(
-                            //             color: BaseColors.backBtnColor,
-                            //             fontSize: 12),
-                            //       ),
-                            //       Text(
-                            //         "Crypto investors should be prepared to lose all their money, BOE governor says",
-                            //         style: getTheme(context: context)
-                            //             .textTheme
-                            //             .titleMedium
-                            //             ?.copyWith(
-                            //             color: BaseColors.backBtnColor,
-                            //             fontSize: 16.sp),
-                            //       ),
-                            //       Text(
-                            //         "Published by Ryan Browne",
-                            //         style: getTheme(context: context)
-                            //             .textTheme
-                            //             .titleMedium
-                            //             ?.copyWith(
-                            //           color: BaseColors.backBtnColor,
-                            //           fontSize: 10,
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        width: 311.w,
+                        decoration: BoxDecoration(
+                          color: BaseColors.bluerColor.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            width: 0,
+                            color: Colors.white.withOpacity(0.4),
                           ),
                         ),
-                      )),
-                ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16, top: 8, right: 16, bottom: 0),
+                          child: Wrap(
+                            children: [
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Sunday, 9 May 2021",
+                                    style: getTheme(context: context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                            color: BaseColors.backBtnColor,
+                                            fontSize: 12.sp),
+                                  ),
+                                  Text(
+                                    "Crypto investors should be prepared to lose all their money, BOE governor says",
+                                    style: getTheme(context: context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                            color: BaseColors.backBtnColor,
+                                            fontSize: 16.sp),
+                                  ),
+                                  Text(
+                                    "Published by Ryan Browne",
+                                    style: getTheme(context: context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: BaseColors.backBtnColor,
+                                          fontSize: 10,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )),
               ),
             ),
           ),

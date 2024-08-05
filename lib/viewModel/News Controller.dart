@@ -1,22 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:news_app_community/model/top_Headlines_model.dart';
+import 'package:news_app_community/repositories/top_headline/top_headline_repo.dart';
+import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/view/ui/Favorite_Screen/favroite_screen.dart';
-import 'package:news_app_community/view/ui/news_details/news_details_screen.dart';
-import 'package:news_app_community/view/ui/notication/notifaction_screen.dart';
-import 'package:news_app_community/view/ui/search_Screen/search_Screen.dart';
 import '../view/ui/home_screen/home_screen.dart';
 
 class NewsController extends GetxController {
+  final TopHeadlineRepo topHeadlineRepo;
+
+   NewsController(this.topHeadlineRepo);
+
   final searchController = TextEditingController();
-  var selectedIndex = 0.obs;
+  RxInt selectedIndex = 0.obs;
   RxBool isPadding = false.obs;
   RxBool startAnimation = false.obs;
+  RxBool isLoading = false.obs;
 
-  var selectedCategory = Rxn<int>();
+  var selectedCategory = 0.obs;
   var selectedChip = ''.obs;
   var selectedBottmBarIndex = 0.obs;
   var selectedChips = <String>[].obs;
+  var topHeadlines = TopHeadlines().obs;
 
   void selectMultiChip(String chip) {
     if (selectedChips.contains(chip)) {
@@ -45,7 +52,7 @@ class NewsController extends GetxController {
 
   void selectChip(int index) {
     if (selectedCategory.value == index) {
-      selectedCategory.value = null;
+      selectedCategory.value = 0;
     } else {
       selectedCategory.value = index;
     }
@@ -53,11 +60,30 @@ class NewsController extends GetxController {
 
   @override
   void onInit() {
+    selectedIndex.value = 0;
+    fetchOffices();
     super.onInit();
+    selectedBottmBarIndex.value =0;
+    print("---------------------------------- : ${selectedIndex.value}");
   }
+
+
+  Future<void> fetchOffices() async {
+    try {
+      isLoading(true);
+      final result = await topHeadlineRepo.getTopHeadline();
+   topHeadlines.value = result;
+    } catch (e) {
+     Get.snackbar(BaseStrings.error, e.toString());
+    } finally {
+      isLoading(false);
+    }
+  }
+
 
   @override
   void dispose() {
     super.dispose();
   }
+
 }

@@ -19,7 +19,7 @@ class AppPages {
     ),
     GetPage(
       name: BaseRoute.bottomBarScreen,
-      page: () =>  const BottomBarScreen(),
+      page: () =>   BottomBarScreen(),
     ),
     GetPage(
       name: BaseRoute.newsDetailsScreen,

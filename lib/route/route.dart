@@ -7,5 +7,4 @@ class BaseRoute {
   static const String favroiteScreen = '/FavroiteScreen';
 
 
-
 }

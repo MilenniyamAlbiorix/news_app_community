@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:news_app_community/controller/News%20Controller.dart';
+import 'package:news_app_community/viewModel/News%20Controller.dart';
 import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/res/functions/base_funcations.dart';
 import 'package:news_app_community/utils/extensions/base_extensions.dart';

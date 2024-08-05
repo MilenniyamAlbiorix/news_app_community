@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_instance/get_instance.dart';
-import 'package:news_app_community/controller/News%20Controller.dart';
+import 'package:news_app_community/viewModel/News%20Controller.dart';
 import 'package:news_app_community/res/const/Colors.dart';
 import 'package:news_app_community/res/const/assets.dart';
 import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/res/functions/base_funcations.dart';
 import 'package:news_app_community/route/route.dart';
 import 'package:news_app_community/utils/extensions/base_extensions.dart';
-
 import 'carouselSlider_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -108,7 +107,7 @@ Get.toNamed(BaseRoute.notificationScreen);
               ],
             ),
             10.toVSB,
-            carouselSliderWidgets(),
+            Obx(()=>  newsController.topHeadlines.value.data == null || newsController.topHeadlines.value.data!.isEmpty  ? carouselSliderWidgets() : Center(child: Text('No data available')),),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               child: SizedBox(
