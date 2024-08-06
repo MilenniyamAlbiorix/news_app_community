@@ -41,6 +41,8 @@ dependencies:
   readmore: ^3.0.0
   carousel_slider: ^4.2.1
   cached_network_image: ^3.4.0
+  dio: ^5.5.0+1
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

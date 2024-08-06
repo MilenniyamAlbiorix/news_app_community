@@ -55,24 +55,24 @@ class Datum {
 
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    title: json["title"],
-    link: json["link"],
-    snippet: json["snippet"],
+    title: json["title"] ?? "",
+    link: json["link"]?? "",
+    snippet: json["snippet"] ?? "",
     photoUrl: json["photo_url"],
     publishedDatetimeUtc: json["published_datetime_utc"] == null ? null : DateTime.parse(json["published_datetime_utc"]),
-    sourceUrl: json["source_url"],
+    sourceUrl: json["source_url"] ?? "",
     sourceName: json["source_name"] ?? "",
     sourceLogoUrl: json["source_logo_url"] ?? "",
     sourceFaviconUrl: json["source_favicon_url"] ?? "" ,
-    subArticles: json["sub_articles"] == null ? [] : List<SubArticle>.from(json["sub_articles"]!.map((x) => SubArticle.fromJson(x))),
-    storyId: json["story_id"],
+    subArticles: json["sub_articles"] == null ? [] : List<SubArticle>.from(json["sub_articles"]?.map((x) => SubArticle.fromJson(x))),
+    storyId: json["story_id"] ?? "",
   );
 
   Map<String, dynamic> toJson() => {
-    "title": title,
-    "link": link,
-    "snippet": snippet,
-    "photo_url": photoUrl,
+    "title": title ?? "",
+    "link": link ?? "",
+    "snippet": snippet ?? "",
+    "photo_url": photoUrl ?? "",
     "published_datetime_utc": publishedDatetimeUtc?.toIso8601String(),
     "source_url": sourceUrl ?? "",
     "source_name": sourceName ?? "",
@@ -107,22 +107,22 @@ class SubArticle {
   String toRawJson() => json.encode(toJson());
 
   factory SubArticle.fromJson(Map<String, dynamic> json) => SubArticle(
-    title: json["title"],
-    link: json["link"],
-    photoUrl: json["photo_url"],
+    title: json["title"] ?? "",
+    link: json["link"] ?? "",
+    photoUrl: json["photo_url"] ?? "",
     publishedDatetimeUtc: json["published_datetime_utc"] == null ? null : DateTime.parse(json["published_datetime_utc"]),
-    sourceUrl: json["source_url"],
-    sourceLogoUrl: json["source_logo_url"],
-    sourceFaviconUrl: json["source_favicon_url"],
+    sourceUrl: json["source_url"] ??"",
+    sourceLogoUrl: json["source_logo_url"] ?? "",
+    sourceFaviconUrl: json["source_favicon_url"] ?? "",
   );
 
   Map<String, dynamic> toJson() => {
-    "title": title,
-    "link": link,
-    "photo_url": photoUrl,
+    "title": title ?? "",
+    "link": link ?? "",
+    "photo_url": photoUrl ?? "",
     "published_datetime_utc": publishedDatetimeUtc?.toIso8601String(),
-    "source_url": sourceUrl,
-    "source_logo_url": sourceLogoUrl,
-    "source_favicon_url": sourceFaviconUrl,
+    "source_url": sourceUrl ?? "",
+    "source_logo_url": sourceLogoUrl ?? "",
+    "source_favicon_url": sourceFaviconUrl ??"",
   };
 }

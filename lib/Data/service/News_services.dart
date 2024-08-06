@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:news_app_community/Data/service/api_ends_points.dart';
 import 'dart:convert';
@@ -9,19 +10,105 @@ class NewsServices {
 
   NewsServices(this.baseUrl);
 
+  final Dio dio = Dio();
   Future<TopHeadlines> fetchTopHeadlines() async {
     final response = await http.get(
       Uri.parse(BaseStrings.baseUrl + ApiEndPoints.getTopHeadline),
       headers: {
         'x-rapidapi-key': BaseStrings.apiKey,
-        'x-rapidapi-host': 'real-time-news-data.p.rapidapi.com', // Replace with your API host
+        'x-rapidapi-host': BaseStrings.hosting,
       },
     );
-
     if (response.statusCode == 200) {
       return TopHeadlines.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load top headlines');
     }
   }
+
+
+  Future<TopHeadlines> fetchSearchList(String query) async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/search',
+        queryParameters: {
+          'query': query,
+          'limit': 500,
+          'time_published': 'anytime',
+          'source': 'news',
+          'country': 'US',
+          'lang': 'en',
+        },
+        options: Options(
+          headers: {
+            'x-rapidapi-host': BaseStrings.hosting,
+            'x-rapidapi-key': BaseStrings.apiKey,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['results'];
+      } else {
+        throw Exception('Failed to load search results');
+      }
+    } on DioException catch (e) {
+      String errorDescription = handleDioError(e);
+      print('Error: $errorDescription');
+      throw Exception(errorDescription);
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('Unexpected error occurred.');
+    }
+  }
+
+  Future<TopHeadlines> fetchTopicHeadlines(String topic) async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/topic-headlines',
+        queryParameters: {
+          'topic': topic,
+          'limit': 500,
+          'country': 'US',
+          'lang': 'en',
+        },
+        options: Options(
+          headers: {
+            'x-rapidapi-host': BaseStrings.hosting,
+            'x-rapidapi-key': BaseStrings.apiKey,
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return TopHeadlines.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load topic headlines');
+      }
+    } on DioException catch (e) {
+      String errorDescription = handleDioError(e);
+      print('Error: $errorDescription');
+      throw Exception(errorDescription);
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('Unexpected error occurred.');
+    }
+  }
+
+  String handleDioError(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+        return 'Connection timeout. Please try again later.';
+      case DioExceptionType.sendTimeout:
+        return 'Send timeout. Please try again later.';
+      case DioExceptionType.receiveTimeout:
+        return 'Receive timeout. Please try again later.';
+      case DioExceptionType.cancel:
+        return 'Request to API server was cancelled.';
+      case DioExceptionType.unknown:
+        return 'Network error. Please check your internet connection.';
+      default:
+        return 'Unexpected error occurred.';
+    }
+  }
+
 }

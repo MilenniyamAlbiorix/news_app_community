@@ -13,4 +13,9 @@ class TopHeadlineRepoImpl implements TopHeadlineRepo {
   Future<TopHeadlines> getTopHeadline() async {
     return service.fetchTopHeadlines();
   }
+
+  @override
+  Future<TopHeadlines> getTopicHeadline(String topic) {
+    return service.fetchTopicHeadlines(topic);
+  }
 }

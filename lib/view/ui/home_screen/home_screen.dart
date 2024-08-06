@@ -30,6 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
           title: SizedBox(
             height: 32.h,
             child: TextFormField(
+              onChanged: (val){
+                newsController.searchNewsList(val);
+              },
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 hintText: BaseStrings.search,
@@ -68,7 +71,21 @@ Get.toNamed(BaseRoute.notificationScreen);
             ),
           ],
         ),
-        body: Column(
+        body:
+        newsController.searchController.text.isNotEmpty ?
+        Expanded(
+          child: ListView.builder(
+            itemCount: newsController.results.length,
+            itemBuilder: (context, index) {
+              final article = newsController.results[index];
+              return ListTile(
+                title: Text(article.title ?? 'No title'),
+                subtitle: Text(article.snippet ?? 'No snippet'),
+              );
+            },
+          ),
+        ) :
+        Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
@@ -107,7 +124,7 @@ Get.toNamed(BaseRoute.notificationScreen);
               ],
             ),
             10.toVSB,
-            Obx(()=>  newsController.topHeadlines.value.data == null || newsController.topHeadlines.value.data!.isEmpty  ? carouselSliderWidgets() : Center(child: Text('No data available')),),
+            carouselSliderWidgets(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               child: SizedBox(
@@ -168,15 +185,16 @@ Get.toNamed(BaseRoute.notificationScreen);
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: 5,
+                itemCount:newsController.topicHeadline.length,
                 itemBuilder: (context, index) {
                   return Container(
                     width: 345,
                     height: 128,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.0),
-                      image: const DecorationImage(
-                        image: AssetImage(BaseAssets.frame),
+                      image:  DecorationImage(
+                        onError: (exception, stackTrace) => Image.asset(BaseAssets.topNews),
+                        image: NetworkImage(newsController.topicHeadline[index].photoUrl ?? ""),
                         // Replace with your image asset
                         fit: BoxFit.cover,
                       ),
@@ -192,7 +210,7 @@ Get.toNamed(BaseRoute.notificationScreen);
                                 Flexible(
                                   child: Text(
                                     maxLines: 2,
-                                    '5 things to know about the "conundrum" of lupus',
+                                    newsController.topicHeadline[index].title ?? "",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 14.sp,
