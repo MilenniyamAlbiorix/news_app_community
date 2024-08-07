@@ -3,7 +3,7 @@ class BaseStrings {
 ///API URL
   static const String baseUrl  = "https://real-time-news-data.p.rapidapi.com/";
   static const String hosting  = "real-time-news-data.p.rapidapi.com";
-  static const String apiKey  = "5e3786064bmsh6c8fb4bab9f47ffp10b87bjsn94e20efba92d";
+  static const String apiKey  = "eba00824e3msh58b03f0744481f3p1b8b77jsn6dd0830ca9ce";
 
   static const String fonts ="NewYork";
   static const String nunito ="Nunito";
@@ -19,6 +19,7 @@ class BaseStrings {
   static const String favorite = "Favorite";
   static const String profile = "Profile";
   static const String error = "Error";
+  static const String noDataFound = "Not data Available";
 
 
 }

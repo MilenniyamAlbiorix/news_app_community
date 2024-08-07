@@ -11,6 +11,8 @@ class NewsServices {
   NewsServices(this.baseUrl);
 
   final Dio dio = Dio();
+
+  ///fetchTopHeadline
   Future<TopHeadlines> fetchTopHeadlines() async {
     final response = await http.get(
       Uri.parse(BaseStrings.baseUrl + ApiEndPoints.getTopHeadline),
@@ -30,12 +32,11 @@ class NewsServices {
   Future<TopHeadlines> fetchSearchList(String query) async {
     try {
       final response = await dio.get(
-        '$baseUrl/search',
+        baseUrl + ApiEndPoints.searchNewsList,
         queryParameters: {
           'query': query,
           'limit': 500,
           'time_published': 'anytime',
-          'source': 'news',
           'country': 'US',
           'lang': 'en',
         },
@@ -48,24 +49,22 @@ class NewsServices {
       );
 
       if (response.statusCode == 200) {
-        return response.data['results'];
+        return TopHeadlines.fromJson(response.data);
       } else {
         throw Exception('Failed to load search results');
       }
     } on DioException catch (e) {
       String errorDescription = handleDioError(e);
-      print('Error: $errorDescription');
       throw Exception(errorDescription);
     } catch (e) {
-      print('Error: $e');
-      throw Exception('Unexpected error occurred.');
+      throw Exception('Error: $e');
     }
   }
 
   Future<TopHeadlines> fetchTopicHeadlines(String topic) async {
     try {
       final response = await dio.get(
-        '$baseUrl/topic-headlines',
+        baseUrl + ApiEndPoints.getTopicHeadlineNews,
         queryParameters: {
           'topic': topic,
           'limit': 500,
@@ -102,6 +101,12 @@ class NewsServices {
         return 'Send timeout. Please try again later.';
       case DioExceptionType.receiveTimeout:
         return 'Receive timeout. Please try again later.';
+      case DioExceptionType.badResponse:
+        if (e.response != null && e.response?.statusCode == 404) {
+          return 'Resource not found.';
+        } else {
+          return 'Received invalid status code: ${e.response?.statusCode}';
+        }
       case DioExceptionType.cancel:
         return 'Request to API server was cancelled.';
       case DioExceptionType.unknown:
@@ -110,5 +115,6 @@ class NewsServices {
         return 'Unexpected error occurred.';
     }
   }
+
 
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -17,19 +19,20 @@ class NewsController extends GetxController {
 
   NewsController({ required this.topHeadlineRepo,this.searchNewsRepo});
 
-  final searchController = TextEditingController();
+  final  Rx<TextEditingController> searchController = TextEditingController().obs;
   RxInt selectedIndex = 0.obs;
   RxBool isPadding = false.obs;
   RxBool startAnimation = false.obs;
   RxBool isLoading = false.obs;
   RxBool isSearchLoading = false.obs;
+  RxBool isTopicLoading = false.obs;
 
   var selectedCategory = 0.obs;
   var selectedChip = ''.obs;
   var selectedBottmBarIndex = 0.obs;
   var selectedChips = <String>[].obs;
   var topHeadlines = TopHeadlines().obs;
-
+  var searchQuery = ''.obs;
   var errorMessage = ''.obs;
   RxList<Datum> results = <Datum>[].obs;
   RxList<Datum> topicHeadline = <Datum>[].obs;
@@ -68,11 +71,19 @@ class NewsController extends GetxController {
 
   @override
   void onInit() {
-    selectedIndex.value = 0;
-    fetchOffices();
-    fetchArticlesByCategory(categories[selectedCategory.value]);
+    initDataAndApi();
     super.onInit();
+
     selectedBottmBarIndex.value = 0;
+  }
+
+
+  Future<void> initDataAndApi()async {
+    selectedIndex.value = 0;
+     fetchOffices();
+   await fetchArticlesByCategory(categories[selectedCategory.value]);
+
+
   }
 
   Future<void> fetchOffices() async {
@@ -93,12 +104,16 @@ class NewsController extends GetxController {
   }
 
 
-  void searchNewsList(String query) async {
+  Future<void> searchNewsList(String query) async {
     isSearchLoading(true);
     errorMessage('');
     try {
       final searchResults = await searchNewsRepo?.getSearchNewSList(query);
-      results.assignAll((searchResults?.data?? []));
+      if (searchResults?.data != null) {
+        results.assignAll(searchResults?.data ?? []);
+      } else {
+        results.clear();
+      }
     } catch (e) {
       Get.snackbar(BaseStrings.error, e.toString());
     } finally {
@@ -106,12 +121,19 @@ class NewsController extends GetxController {
     }
   }
 
+
   Future<void> fetchArticlesByCategory(String category) async {
+    isTopicLoading(true);
     try {
       final headlines = await topHeadlineRepo.getTopicHeadline(category);
-      topicHeadline.value = headlines.data ?? [];
+      if(headlines.data !=null || (headlines.data ?? []).isNotEmpty){
+        topicHeadline.value = headlines.data ?? [];
+      }
     } catch (e) {
-      print('Error fetching articles: $e');
+      GetSnackBar(title: BaseStrings.error,message: e.toString(),snackPosition: SnackPosition.BOTTOM,);
+    }
+    finally{
+      isTopicLoading(false);
     }
   }
 

@@ -40,7 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
         title: SizedBox(
             height: 32.h,
             child: searchHelper.searchListWidgets(
-                context: context, controller: newsController.searchController)),
+                context: context, controller: newsController.searchController.value)),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
