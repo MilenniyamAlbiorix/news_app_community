@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:news_app_community/model/top_Headlines_model.dart';
 import 'package:news_app_community/repositories/search_news/search_news_repo.dart';
@@ -20,9 +21,8 @@ class NewsController extends GetxController {
 
   NewsController({required this.topHeadlineRepo, this.searchNewsRepo});
 
-  final Rx<TextEditingController> searchController =
-      TextEditingController().obs;
-  final Debounce debounce = Debounce(const Duration(microseconds: 4000));
+  final Rx<TextEditingController> searchController = TextEditingController().obs;
+
 
   RxInt selectedIndexes = 0.obs;
   RxBool isPadding = false.obs;
@@ -33,7 +33,7 @@ class NewsController extends GetxController {
   var selectedCategory = 0.obs;
 
   var selectedChips = <String>[].obs;
-  var topHeadlines = TopHeadlines().obs;
+  RxList<Datum> topHeadlinesList = <Datum>[].obs;
   var errorMessage = ''.obs;
   RxList<Datum> results = <Datum>[].obs;
   RxList<Datum> topicHeadline = <Datum>[].obs;
@@ -43,11 +43,11 @@ class NewsController extends GetxController {
   var items = <Datum>[].obs;
 
   RxBool atEdge = false.obs;
-  final List<Widget> screens = [
+   RxList<Widget> screens = [
     HomeScreen(),
     const FavroiteScreen(),
     const SearchScreen(),
-  ];
+  ].obs;
 
   final List<String> categories = [
     'WORLD',
@@ -63,7 +63,8 @@ class NewsController extends GetxController {
   @override
   void onInit() {
     PageController(initialPage: 0);
-    initDataAndApi();
+
+     initDataAndApi();
     super.onInit();
 
   }
@@ -88,11 +89,14 @@ class NewsController extends GetxController {
   }
 
   Future<void> fetchTopHeadline() async {
+    isLoading(true);
     try {
-      isLoading(true);
-      final result = await topHeadlineRepo.getTopHeadline();
-      if (result.data != null && (result.data ?? []).isNotEmpty) {
-        topHeadlines.value = result;
+      final response = await topHeadlineRepo.getTopHeadline();
+      if (response.data != null && (response.data ?? []).isNotEmpty) {
+        topHeadlinesList.addAll(response.data ?? []);
+      }
+      if (kDebugMode) {
+        print("*********************************${topHeadlinesList.value}");
       }
     } catch (e) {
       // Get.snackbar(
@@ -127,7 +131,10 @@ class NewsController extends GetxController {
     try {
       final headlines = await topHeadlineRepo.getTopicHeadline(category);
       if (headlines.data != null || (headlines.data ?? []).isNotEmpty) {
-        topicHeadline.value = headlines.data ?? [];
+        topicHeadline.addAll(headlines.data ?? []) ;
+      }
+       if (kDebugMode) {
+        print("-----------------------------------:${topicHeadline.value}");
       }
     } catch (e) {
       GetSnackBar(

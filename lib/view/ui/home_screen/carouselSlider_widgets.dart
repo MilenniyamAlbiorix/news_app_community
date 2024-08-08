@@ -18,15 +18,14 @@ Widget carouselSliderWidgets() {
             color: BaseColors.newsbackbtnColor,
             radius: 12,
           )
-        : controller.topHeadlines.value.data != null ||
-                (controller.topHeadlines.value.data ?? []).isNotEmpty
-            ? CarouselSlider(
+        : controller.topHeadlinesList.isNotEmpty ?
+             CarouselSlider(
                 options: CarouselOptions(
                     height: 220.0.h,
                     enlargeCenterPage: true,
                     viewportFraction: 1,
                     animateToClosest: true),
-                items: controller.topHeadlines.value.data?.map((item) {
+                items: controller.topHeadlinesList.value.map((item) {
                   return Builder(
                     builder: (BuildContext context) {
                       return GestureDetector(

@@ -10,10 +10,16 @@ class NewsServices {
 
   NewsServices(this.baseUrl);
 
-  final Dio dio = Dio();
+  final Dio dio = Dio(BaseOptions(
+    receiveDataWhenStatusError: true,
+      connectTimeout: Duration(seconds: 30), // 60 seconds
+      receiveTimeout:  Duration(seconds: 60), // 60 seconds
+  ));
+
 
   ///fetchTopHeadline
   Future<TopHeadlines> fetchTopHeadlines() async {
+
     final response = await http.get(
       Uri.parse(BaseStrings.baseUrl + ApiEndPoints.getTopHeadline),
       headers: {
@@ -60,13 +66,47 @@ class NewsServices {
     }
   }
 
+  // Future<TopHeadlines> fetchTopicHeadlines(String topic) async {
+  //   try {
+  //     final response = await dio.get(
+  //       baseUrl + ApiEndPoints.getTopicHeadlineNews,
+  //       queryParameters: {
+  //         'topic': topic,
+  //         'limit': 500,
+  //         'country': 'US',
+  //         'lang': 'en',
+  //       },
+  //       options: Options(
+  //         headers: {
+  //           'x-rapidapi-host': BaseStrings.hosting,
+  //           'x-rapidapi-key': BaseStrings.apiKey,
+  //         },
+  //       ),
+  //     );
+  //     if (response.statusCode == 200) {
+  //
+  //       return TopHeadlines.fromJson(response.data);
+  //     } else {
+  //       throw Exception('Failed to load topic headlines');
+  //     }
+  //   } on DioException catch (e) {
+  //     String errorDescription = handleDioError(e);
+  //     print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
+  //     throw Exception(errorDescription);
+  //   } catch (e) {
+  //     print('Error: ${e.runtimeType} - $e');
+  //     throw Exception('Unexpected error occurred: $e');
+  //   }
+  //
+  // }
   Future<TopHeadlines> fetchTopicHeadlines(String topic) async {
+    final startTime = DateTime.now();
     try {
       final response = await dio.get(
         baseUrl + ApiEndPoints.getTopicHeadlineNews,
         queryParameters: {
           'topic': topic,
-          'limit': 500,
+          'limit': 50,
           'country': 'US',
           'lang': 'en',
         },
@@ -77,20 +117,34 @@ class NewsServices {
           },
         ),
       );
+      final duration = DateTime.now().difference(startTime);
+      print('Request Duration: ${duration.inMilliseconds} ms');
+
       if (response.statusCode == 200) {
         return TopHeadlines.fromJson(response.data);
       } else {
         throw Exception('Failed to load topic headlines');
       }
     } on DioException catch (e) {
+      final duration = DateTime.now().difference(startTime);
+      print('Request Duration: ${duration.inMilliseconds} ms');
+
+      if (e.response != null) {
+        print('Response Data: ${e.response?.data}');
+        return e.response?.data; // Returning the raw response data in case of an error
+      }
+
       String errorDescription = handleDioError(e);
-      print('Error: $errorDescription');
       throw Exception(errorDescription);
     } catch (e) {
+      final duration = DateTime.now().difference(startTime);
+      print('Request Duration: ${duration.inMilliseconds} ms');
+
       print('Error: $e');
       throw Exception('Unexpected error occurred.');
     }
   }
+
 
   String handleDioError(DioException e) {
     switch (e.type) {

@@ -31,6 +31,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           PopScope(
             canPop: false,
             child: PageView(
+
               physics: const NeverScrollableScrollPhysics(),
               controller: pageController,
               onPageChanged: (index) {
@@ -60,21 +61,26 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
               ),
               child: Obx(
                     ()=> BottomNavigationBar(
+                      selectedLabelStyle: const TextStyle(color: BaseColors.bluerColor),
                   selectedFontSize: 10.sp,
                   elevation: 0,
                   backgroundColor: Colors.transparent,
                   items: [
                     BottomNavigationBarItem(
-                      icon: Image.asset(
-                        newsController.selectedIndexes.value == 0 ?   BaseAssets.homeActive : BaseAssets.homeUnSelected,
-                        height: 24.h,
+                      icon: Obx(
+                            ()=> Image.asset(
+                          newsController.selectedIndexes.value == 0 ?   BaseAssets.homeActive : BaseAssets.homeUnSelected,
+                          height: 24.h,
+                        ),
                       ),
                       label: BaseStrings.home,
                     ),
                     BottomNavigationBarItem(
-                      icon:Image(
-                        image: AssetImage(newsController.selectedIndexes.value == 1 ? BaseAssets.favoriteActive: BaseAssets.favoriteUnSelcted,),
-                        height: 20.h,
+                      icon: Obx(
+                            ()=> Image.asset(
+                          newsController.selectedIndexes.value == 1 ?   BaseAssets.favoriteActive : BaseAssets.favoriteUnSelcted,
+                          height: 24.h,
+                        ),
                       ),
                       label:BaseStrings.favorite,
                     ),

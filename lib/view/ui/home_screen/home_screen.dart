@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:intl/intl.dart';
@@ -103,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         )
             : Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -209,10 +211,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Obx(
                   () => newsController.isTopicLoading.value
-                  ? LoadingAnimationWidget.flickr(
-                    leftDotColor: const Color(0xFF1A1A3F),
-                    rightDotColor: Color.fromARGB(255, 12, 110, 42),
-                    size: 50,)
+                  ? const Center(
+                    child: SpinKitCircle(
+
+                      color: Colors.blue,
+                      size: 50.0,
+                    ),
+                  )
                   : newsController.topicHeadline.isNotEmpty
                   ? Expanded(
                 child: ListView.builder(
