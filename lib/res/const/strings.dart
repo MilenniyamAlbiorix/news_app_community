@@ -3,7 +3,8 @@ class BaseStrings {
 ///API URL
   static const String baseUrl  = "https://real-time-news-data.p.rapidapi.com/";
   static const String hosting  = "real-time-news-data.p.rapidapi.com";
-  static const String apiKey  = "eba00824e3msh58b03f0744481f3p1b8b77jsn6dd0830ca9ce";
+  static const String apiKey  = "88de4b5ea3msh3f1e6d5dae59e21p14c139jsn990774884375";
+  static const String latestNews  = "Latest News";
 
   static const String fonts ="NewYork";
   static const String nunito ="Nunito";

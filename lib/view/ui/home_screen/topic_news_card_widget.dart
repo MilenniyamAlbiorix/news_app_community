@@ -6,11 +6,12 @@ import '../../../res/const/assets.dart';
 Widget newsCardWidgets(
     {required String? imageUrl, required String? title, required String? author, required String? date}) {
   return Container(
-    width: 345,
-    height: 128,
+    width: 345.w,
+    height: 128.h,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(8.0),
       image:  DecorationImage(
+        colorFilter:  ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.color),
         onError: (exception, stackTrace) => Image.asset(BaseAssets.topNews),
         image: NetworkImage(imageUrl ?? ""),
         // Replace with your image asset
@@ -21,11 +22,12 @@ Widget newsCardWidgets(
       children: [
         Positioned(
             top: 10,
-            left: 10,
+            left: 4,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Flexible(
+                SizedBox(
+                 width:  300.w,
                   child: Text(
                     maxLines: 2,
                     title ?? "",
@@ -38,7 +40,7 @@ Widget newsCardWidgets(
               ],
             )),
          Positioned(
-          bottom: 10,
+          bottom: 50,
           left: 10,
           child: Text(
             author ??"",

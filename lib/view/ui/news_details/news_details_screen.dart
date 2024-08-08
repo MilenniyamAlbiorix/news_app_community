@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,13 +5,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
+import 'package:news_app_community/model/top_Headlines_model.dart';
 import 'package:news_app_community/viewModel/News%20Controller.dart';
-
 import 'package:news_app_community/res/const/assets.dart';
-
-import 'package:cached_network_image/cached_network_image.dart';
-
-import '../../../viewModel/News Controller.dart';
 import '../../../res/const/Colors.dart';
 import '../../../res/functions/base_funcations.dart';
 
@@ -63,13 +58,43 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     newsController.topHeadLineDetails = Get.arguments;
+
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: Container(
+        height: 56.h,
+        width: 56.w,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [BaseColors.gradintOne, BaseColors.gradintTwo],
+          ),
+        ),
+        child: FloatingActionButton(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          shape:
+              const CircleBorder(side: BorderSide(color: Colors.transparent)),
+          onPressed: () {
+            List<Datum> updatedItems = List.from(newsController.items.value);
+            updatedItems.add(Get.arguments);
+            newsController.items.value = updatedItems;
+            newsController.addItem(updatedItems);
+            //   newsController.items.value = [Get.arguments];
+            // newsController.addItem( newsController.items.value);
+          },
+          child: Image.asset(
+            BaseAssets.group,
+            height: 18.5.h,
+            width: 22.5.w,
+          ),
+        ),
+      ).paddingSymmetric(horizontal: 10, vertical: 20),
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           if (_scrollController.position.userScrollDirection ==
               ScrollDirection.reverse) {
             newsController.isPadding.value = true;
-
             if (scrollNotification.metrics.pixels > 200) {
               newsController.atEdge.value = true;
             }
@@ -163,7 +188,8 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
     final appBarSize = expandedHeight - shrinkOffset;
     final proportion = 2 - (expandedHeight / appBarSize);
     final percent = proportion < 0 || proportion > 1 ? 0.0 : proportion;
-    final date = DateTime.parse(newsController.topHeadLineDetails.publishedDatetimeUtc.toString());
+    final date = DateTime.parse(
+        newsController.topHeadLineDetails.publishedDatetimeUtc.toString());
     String formattedDate = DateFormat('EEEE, d MMMM yyyy').format(date);
     return SizedBox(
       height: expandedHeight + expandedHeight / 2,
@@ -259,8 +285,7 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    formattedDate
-                                        .toString(),
+                                    formattedDate.toString(),
                                     // args.name?? "",
                                     style: getTheme(context: context)
                                         .textTheme

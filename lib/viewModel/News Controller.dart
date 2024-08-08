@@ -1,56 +1,52 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:news_app_community/model/top_Headlines_model.dart';
 import 'package:news_app_community/repositories/search_news/search_news_repo.dart';
 import 'package:news_app_community/repositories/top_headline/top_headline_repo.dart';
 import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/view/ui/Favorite_Screen/favroite_screen.dart';
+import '../utils/widgets/debounce_widgets.dart';
 import '../view/ui/home_screen/home_screen.dart';
+import '../view/ui/search_Screen/search_Screen.dart';
 
 class NewsController extends GetxController {
   final TopHeadlineRepo topHeadlineRepo;
 
   final SearchNewsRepo? searchNewsRepo;
 
-  NewsController({ required this.topHeadlineRepo,this.searchNewsRepo});
+  NewsController({required this.topHeadlineRepo, this.searchNewsRepo});
 
-  final  Rx<TextEditingController> searchController = TextEditingController().obs;
-  RxInt selectedIndex = 0.obs;
+  final Rx<TextEditingController> searchController =
+      TextEditingController().obs;
+  final Debounce debounce = Debounce(const Duration(microseconds: 4000));
+
+  RxInt selectedIndexes = 0.obs;
   RxBool isPadding = false.obs;
   RxBool startAnimation = false.obs;
   RxBool isLoading = false.obs;
   RxBool isSearchLoading = false.obs;
   RxBool isTopicLoading = false.obs;
-
   var selectedCategory = 0.obs;
-  var selectedChip = ''.obs;
-  var selectedBottmBarIndex = 0.obs;
+
   var selectedChips = <String>[].obs;
   var topHeadlines = TopHeadlines().obs;
-  var searchQuery = ''.obs;
   var errorMessage = ''.obs;
   RxList<Datum> results = <Datum>[].obs;
   RxList<Datum> topicHeadline = <Datum>[].obs;
-  var topHeadLineDetails ;
+  var topHeadLineDetails;
 
-  void selectMultiChip(String chip) {
-    if (selectedChips.contains(chip)) {
-      selectedChips.remove(chip);
-    } else {
-      selectedChips.add(chip);
-    }
-  }
+  final box = GetStorage();
+  var items = <Datum>[].obs;
 
   RxBool atEdge = false.obs;
   final List<Widget> screens = [
     HomeScreen(),
     const FavroiteScreen(),
-    // const SearchScreen(),
+    const SearchScreen(),
   ];
 
   final List<String> categories = [
@@ -64,48 +60,53 @@ class NewsController extends GetxController {
     'HEALTH'
   ];
 
+  @override
+  void onInit() {
+    PageController(initialPage: 0);
+    initDataAndApi();
+    super.onInit();
+
+  }
+
+  Future<void> initDataAndApi() async {
+    await fetchTopHeadline();
+
+    // items.value = List<Datum>.from(box.read<List>('items') ?? []);
+  }
+
+  void selectMultiChip(String chip) {
+    if (selectedChips.contains(chip)) {
+      selectedChips.remove(chip);
+    } else {
+      selectedChips.add(chip);
+    }
+  }
+
   void selectChip(int index) {
     selectedCategory.value = index;
     fetchArticlesByCategory(categories[index]);
   }
 
-  @override
-  void onInit() {
-    initDataAndApi();
-    super.onInit();
-
-    selectedBottmBarIndex.value = 0;
-  }
-
-
-  Future<void> initDataAndApi()async {
-    selectedIndex.value = 0;
-     fetchOffices();
-   await fetchArticlesByCategory(categories[selectedCategory.value]);
-
-
-  }
-
-  Future<void> fetchOffices() async {
+  Future<void> fetchTopHeadline() async {
     try {
       isLoading(true);
       final result = await topHeadlineRepo.getTopHeadline();
       if (result.data != null && (result.data ?? []).isNotEmpty) {
         topHeadlines.value = result;
       }
-      if (kDebugMode) {
-        print(topHeadlines.value);
-      }
     } catch (e) {
-      Get.snackbar(BaseStrings.error, e.toString());
+      // Get.snackbar(
+      //   BaseStrings.error,
+      //   e.toString(),
+      // );
     } finally {
       isLoading(false);
     }
+     await fetchArticlesByCategory(categories[selectedCategory.value]);
   }
 
-
   Future<void> searchNewsList(String query) async {
-    isSearchLoading(true);
+    isSearchLoading.value = true;
     errorMessage('');
     try {
       final searchResults = await searchNewsRepo?.getSearchNewSList(query);
@@ -115,26 +116,33 @@ class NewsController extends GetxController {
         results.clear();
       }
     } catch (e) {
-      Get.snackbar(BaseStrings.error, e.toString());
+      // Get.snackbar(BaseStrings.error, e.toString());
     } finally {
       isSearchLoading(false);
     }
   }
 
-
   Future<void> fetchArticlesByCategory(String category) async {
     isTopicLoading(true);
     try {
       final headlines = await topHeadlineRepo.getTopicHeadline(category);
-      if(headlines.data !=null || (headlines.data ?? []).isNotEmpty){
+      if (headlines.data != null || (headlines.data ?? []).isNotEmpty) {
         topicHeadline.value = headlines.data ?? [];
       }
     } catch (e) {
-      GetSnackBar(title: BaseStrings.error,message: e.toString(),snackPosition: SnackPosition.BOTTOM,);
-    }
-    finally{
+      GetSnackBar(
+        title: BaseStrings.error,
+        message: e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
       isTopicLoading(false);
     }
+  }
+
+  void addItem(List<Datum> item) {
+    items.addAll(item);
+    box.write('items', items);
   }
 
   @override

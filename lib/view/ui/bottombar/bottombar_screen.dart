@@ -6,12 +6,22 @@ import 'package:news_app_community/res/const/Colors.dart';
 import 'package:news_app_community/res/const/assets.dart';
 import 'package:news_app_community/res/const/strings.dart';
 
-class BottomBarScreen extends StatelessWidget {
-   BottomBarScreen({super.key});
+class BottomBarScreen extends StatefulWidget {
+  BottomBarScreen({super.key});
 
+  @override
+  State<BottomBarScreen> createState() => _BottomBarScreenState();
+}
+
+class _BottomBarScreenState extends State<BottomBarScreen> {
+
+  final PageController pageController = PageController( initialPage: 0);
+  @override
+  void initState() {
+    newsController.selectedIndexes.value = 0;
+    super.initState();
+  }
   final NewsController newsController = Get.find<NewsController>();
-
-  final PageController _pageController = PageController( initialPage: 0);
 
   @override
   Widget build(BuildContext context) {
@@ -22,68 +32,73 @@ class BottomBarScreen extends StatelessWidget {
             canPop: false,
             child: PageView(
               physics: const NeverScrollableScrollPhysics(),
-              controller: _pageController,
+              controller: pageController,
               onPageChanged: (index) {
                 print("----------------------index : $index");
-                newsController.selectedIndex.value = index;
+                newsController.selectedIndexes.value = index;
               },
               children: newsController.screens,
             ),
           ),
-         Positioned(
+          Positioned(
             bottom: 40.h,
             left: 20.w,
             right: 20.w,
             child: Container(
-                width: 100.w,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  color: BaseColors.whiteColor,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      spreadRadius: 1,
-                      blurRadius: 10,
-                      offset: Offset(0, 4),
+              width: 100.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32),
+                color: BaseColors.whiteColor,
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    spreadRadius: 1,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Obx(
+                    ()=> BottomNavigationBar(
+                  selectedFontSize: 10.sp,
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: Image.asset(
+                        newsController.selectedIndexes.value == 0 ?   BaseAssets.homeActive : BaseAssets.homeUnSelected,
+                        height: 24.h,
+                      ),
+                      label: BaseStrings.home,
+                    ),
+                    BottomNavigationBarItem(
+                      icon:Image(
+                        image: AssetImage(newsController.selectedIndexes.value == 1 ? BaseAssets.favoriteActive: BaseAssets.favoriteUnSelcted,),
+                        height: 20.h,
+                      ),
+                      label:BaseStrings.favorite,
+                    ),
+                    const BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      label: BaseStrings.profile,
                     ),
                   ],
+                  currentIndex: newsController.selectedIndexes.value ,
+                  onTap: (index) {
+                  newsController.selectedIndexes.value = index;
+                  pageController.jumpToPage(index );
+                  },
                 ),
-                child: Obx(
-                  ()=> BottomNavigationBar(
-                    selectedFontSize: 10.sp,
-                    elevation: 0,
-                    backgroundColor: Colors.transparent,
-                    items: [
-                      BottomNavigationBarItem(
-                        icon: Image.asset(
-                          newsController.selectedIndex.value == 0 ?   BaseAssets.homeActive : BaseAssets.homeUnSelected,
-                          height: 24.h,
-                        ),
-                        label: BaseStrings.home,
-                      ),
-                      BottomNavigationBarItem(
-                        icon:Image(
-                          image: AssetImage(newsController.selectedIndex.value == 1 ? BaseAssets.favoriteActive: BaseAssets.favoriteUnSelcted,),
-                          height: 20.h,
-                        ),
-                        label:BaseStrings.favorite,
-                      ),
-                      const BottomNavigationBarItem(
-                        icon: Icon(Icons.person),
-                        label: BaseStrings.profile,
-                      ),
-                    ],
-                    currentIndex: newsController.selectedIndex.value,
-                    onTap: (index) {
-                      newsController.selectedIndex.value = index;
-                      _pageController.jumpToPage(index);
-                    },
-                  ),
-                ),
-              ).paddingSymmetric(horizontal: 20),
-            ),
+              ),
+            ).paddingSymmetric(horizontal: 20),
+          ),
         ],
       ),
     );
   }
+  // @override
+  // void dispose() {
+  //   pageController.dispose();
+  //   super.dispose();
+  // }
 }

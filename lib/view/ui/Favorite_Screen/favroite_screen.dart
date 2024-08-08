@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_instance/get_instance.dart';
+import 'package:news_app_community/viewModel/News%20Controller.dart';
 import '../../../res/const/strings.dart';
 import '../../../res/functions/base_funcations.dart';
 import '../../../utils/widgets/gradientText.dart';
@@ -14,6 +17,8 @@ class FavroiteScreen extends StatefulWidget {
 }
 
 class _FavroiteScreenState extends State<FavroiteScreen> {
+
+  final NewsController newsController = Get.find<NewsController>();
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -24,7 +29,6 @@ class _FavroiteScreenState extends State<FavroiteScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         centerTitle: true,
-
         title: GradientText(
           BaseStrings.favoriteNews,
           style: getTheme(context: context)
@@ -45,12 +49,14 @@ class _FavroiteScreenState extends State<FavroiteScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: 1,
+              itemCount: newsController.items.length ?? 0 ,
               itemBuilder: (context, index) {
-                return notificationListing(context: context);
+                var item =  newsController.items[index];
+                return newsController.items.isNotEmpty ?
+                  notificationListing(context: context,title:item.title, imageUrl: item.photoUrl) : const Text(BaseStrings.noDataFound);
               },
             ),
-          )
+          ),
         ],
       ),
     );

@@ -47,7 +47,6 @@ class NewsServices {
           },
         ),
       );
-
       if (response.statusCode == 200) {
         return TopHeadlines.fromJson(response.data);
       } else {
