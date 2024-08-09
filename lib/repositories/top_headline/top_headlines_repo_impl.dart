@@ -3,7 +3,7 @@ import 'package:news_app_community/repositories/top_headline/top_headline_repo.d
 import '../../Data/service/News_services.dart';
 
 class TopHeadlineRepoImpl implements TopHeadlineRepo {
-  final NewsServices service;
+  final NewsApiServices service;
 
   TopHeadlineRepoImpl(this.service);
 

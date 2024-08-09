@@ -3,7 +3,7 @@ import '../../Data/service/News_services.dart';
 import '../../model/top_Headlines_model.dart';
 
 class SearchNewsImpl implements SearchNewsRepo {
-  final NewsServices service;
+  final NewsApiServices service;
 
   SearchNewsImpl(this.service);
 

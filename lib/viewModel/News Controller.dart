@@ -39,7 +39,7 @@ class NewsController extends GetxController {
   RxList<Datum> topicHeadline = <Datum>[].obs;
   var topHeadLineDetails;
 
-  final box = GetStorage();
+  final GetStorage storage = GetStorage();
   var items = <Datum>[].obs;
 
   RxBool atEdge = false.obs;
@@ -62,17 +62,17 @@ class NewsController extends GetxController {
 
   @override
   void onInit() {
-    PageController(initialPage: 0);
 
+print("on Init initDataAndApi");
      initDataAndApi();
     super.onInit();
 
   }
 
   Future<void> initDataAndApi() async {
+    print("In initDataAndApi");
     await fetchTopHeadline();
-
-    // items.value = List<Datum>.from(box.read<List>('items') ?? []);
+    loadItemsFromStorage();
   }
 
   void selectMultiChip(String chip) {
@@ -90,6 +90,7 @@ class NewsController extends GetxController {
 
   Future<void> fetchTopHeadline() async {
     isLoading(true);
+
     try {
       final response = await topHeadlineRepo.getTopHeadline();
       if (response.data != null && (response.data ?? []).isNotEmpty) {
@@ -99,10 +100,10 @@ class NewsController extends GetxController {
         print("*********************************${topHeadlinesList.value}");
       }
     } catch (e) {
-      // Get.snackbar(
-      //   BaseStrings.error,
-      //   e.toString(),
-      // );
+   /*   Get.snackbar(
+        BaseStrings.error,
+        e.toString(),
+      );*/
     } finally {
       isLoading(false);
     }
@@ -111,6 +112,7 @@ class NewsController extends GetxController {
 
   Future<void> searchNewsList(String query) async {
     isSearchLoading.value = true;
+
     errorMessage('');
     try {
       final searchResults = await searchNewsRepo?.getSearchNewSList(query);
@@ -127,9 +129,15 @@ class NewsController extends GetxController {
   }
 
   Future<void> fetchArticlesByCategory(String category) async {
+
     isTopicLoading(true);
+    topicHeadline.value.clear();
     try {
+      print("fetchArticlesByCategory started");
+
       final headlines = await topHeadlineRepo.getTopicHeadline(category);
+      print("${headlines} Hedlines");
+      topicHeadline.value.clear();
       if (headlines.data != null || (headlines.data ?? []).isNotEmpty) {
         topicHeadline.addAll(headlines.data ?? []) ;
       }
@@ -137,21 +145,41 @@ class NewsController extends GetxController {
         print("-----------------------------------:${topicHeadline.value}");
       }
     } catch (e) {
+      print("Error ${e.toString()}");
       GetSnackBar(
         title: BaseStrings.error,
         message: e.toString(),
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
+      print("Finally Block called");
       isTopicLoading(false);
     }
   }
 
-  void addItem(List<Datum> item) {
-    items.addAll(item);
-    box.write('items', items);
+  void addItem(List<Datum> newItems) {
+    final List<dynamic> storedItems = storage.read<List<dynamic>>('items') ?? [];
+    final List<Datum> existingItems = storedItems.map((item) {
+      return Datum.fromJson(item as Map<String, dynamic>);
+    }).toList();
+    existingItems.addAll(newItems);
+    final List<Map<String, dynamic>> updatedItems = existingItems.map((item) {
+      return item.toJson();
+    }).toList();
+
+    storage.write('items', updatedItems);
   }
 
+
+  void loadItemsFromStorage() {
+    final List<dynamic> storedItems = storage.read<List<dynamic>>('items') ?? [];
+
+    final List<Datum> itemsList = storedItems.map((item) {
+      return Datum.fromJson(item as Map<String, dynamic>);
+    }).toList();
+
+    items.value.assignAll(itemsList);
+  }
   @override
   void dispose() {
     super.dispose();

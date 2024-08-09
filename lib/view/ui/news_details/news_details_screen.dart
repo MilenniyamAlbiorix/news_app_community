@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:news_app_community/model/top_Headlines_model.dart';
+import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/viewModel/News%20Controller.dart';
 import 'package:news_app_community/res/const/assets.dart';
 import '../../../res/const/Colors.dart';
@@ -58,7 +59,6 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     newsController.topHeadLineDetails = Get.arguments;
-
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: Container(
@@ -76,12 +76,19 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
           shape:
               const CircleBorder(side: BorderSide(color: Colors.transparent)),
           onPressed: () {
-            List<Datum> updatedItems = List.from(newsController.items.value);
-            updatedItems.add(Get.arguments);
-            newsController.items.value = updatedItems;
-            newsController.addItem(updatedItems);
-            //   newsController.items.value = [Get.arguments];
-            // newsController.addItem( newsController.items.value);
+            final arguments = Get.arguments;
+            final List<Datum> list;
+            if (arguments is List<Datum>) {
+              list = arguments;
+            } else if (arguments is Datum) {
+              list = [arguments];
+            } else {
+              return; // Or handle the error as needed
+            }
+
+            newsController.addItem(list);
+            const GetSnackBar(message: BaseStrings.newSave,title: BaseStrings.save,snackPosition: SnackPosition.BOTTOM,);
+            newsController.loadItemsFromStorage();
           },
           child: Image.asset(
             BaseAssets.group,

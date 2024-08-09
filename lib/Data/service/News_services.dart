@@ -1,25 +1,22 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:news_app_community/Data/service/api_ends_points.dart';
 import 'dart:convert';
 import 'package:news_app_community/model/top_Headlines_model.dart';
 import 'package:news_app_community/res/const/strings.dart';
 
-class NewsServices {
-  final String baseUrl;
+class NewsApiServices {
+  final DioClient dioClient;
 
-  NewsServices(this.baseUrl);
+  NewsApiServices(this.dioClient);
 
-  final Dio dio = Dio(BaseOptions(
-    receiveDataWhenStatusError: true,
-      connectTimeout: Duration(seconds: 30), // 60 seconds
-      receiveTimeout:  Duration(seconds: 60), // 60 seconds
-  ));
 
 
   ///fetchTopHeadline
   Future<TopHeadlines> fetchTopHeadlines() async {
-
     final response = await http.get(
       Uri.parse(BaseStrings.baseUrl + ApiEndPoints.getTopHeadline),
       headers: {
@@ -35,10 +32,49 @@ class NewsServices {
   }
 
 
+
+  Future<TopHeadlines> fetchTopicHeadlines(String topic) async {
+    try {
+      final response = await dioClient.dio.get(
+        ApiEndPoints.getTopicHeadlineNews,
+        queryParameters: {
+          'topic': topic,
+          'limit': 500,
+          'country': 'US',
+          'lang': 'en',
+        },
+      );
+      print("response data success************** ${response.data}");
+      if (response.statusCode == 200) {
+        return TopHeadlines.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load topic headlines');
+      }
+    } on DioException catch (e) {
+print("Dio Expceptions ${e.error.toString()}");
+print("Dio Expceptions ${e.error}");
+      if (e.response != null) {
+        if (kDebugMode) {
+          print('Response Data: ${e.response?.data}');
+        }
+        return e.response
+            ?.data;
+      }
+
+      String errorDescription = handleDioError(e);
+      throw Exception(errorDescription);
+    } catch (e) {
+      GetSnackBar(title: BaseStrings.error,message: e.toString(),);
+      print('Error: $e');
+      throw Exception('Unexpected error occurred.');
+    }
+  }
+
+
   Future<TopHeadlines> fetchSearchList(String query) async {
     try {
-      final response = await dio.get(
-        baseUrl + ApiEndPoints.searchNewsList,
+      final response = await  dioClient.dio.get(
+        ApiEndPoints.searchNewsList,
         queryParameters: {
           'query': query,
           'limit': 500,
@@ -60,91 +96,14 @@ class NewsServices {
       }
     } on DioException catch (e) {
       String errorDescription = handleDioError(e);
+      if (kDebugMode) {
+        print("log{$errorDescription}");
+      }
       throw Exception(errorDescription);
     } catch (e) {
       throw Exception('Error: $e');
     }
   }
-
-  // Future<TopHeadlines> fetchTopicHeadlines(String topic) async {
-  //   try {
-  //     final response = await dio.get(
-  //       baseUrl + ApiEndPoints.getTopicHeadlineNews,
-  //       queryParameters: {
-  //         'topic': topic,
-  //         'limit': 500,
-  //         'country': 'US',
-  //         'lang': 'en',
-  //       },
-  //       options: Options(
-  //         headers: {
-  //           'x-rapidapi-host': BaseStrings.hosting,
-  //           'x-rapidapi-key': BaseStrings.apiKey,
-  //         },
-  //       ),
-  //     );
-  //     if (response.statusCode == 200) {
-  //
-  //       return TopHeadlines.fromJson(response.data);
-  //     } else {
-  //       throw Exception('Failed to load topic headlines');
-  //     }
-  //   } on DioException catch (e) {
-  //     String errorDescription = handleDioError(e);
-  //     print('Dio Error: ${e.response?.statusCode} - ${e.response?.data}');
-  //     throw Exception(errorDescription);
-  //   } catch (e) {
-  //     print('Error: ${e.runtimeType} - $e');
-  //     throw Exception('Unexpected error occurred: $e');
-  //   }
-  //
-  // }
-  Future<TopHeadlines> fetchTopicHeadlines(String topic) async {
-    final startTime = DateTime.now();
-    try {
-      final response = await dio.get(
-        baseUrl + ApiEndPoints.getTopicHeadlineNews,
-        queryParameters: {
-          'topic': topic,
-          'limit': 50,
-          'country': 'US',
-          'lang': 'en',
-        },
-        options: Options(
-          headers: {
-            'x-rapidapi-host': BaseStrings.hosting,
-            'x-rapidapi-key': BaseStrings.apiKey,
-          },
-        ),
-      );
-      final duration = DateTime.now().difference(startTime);
-      print('Request Duration: ${duration.inMilliseconds} ms');
-
-      if (response.statusCode == 200) {
-        return TopHeadlines.fromJson(response.data);
-      } else {
-        throw Exception('Failed to load topic headlines');
-      }
-    } on DioException catch (e) {
-      final duration = DateTime.now().difference(startTime);
-      print('Request Duration: ${duration.inMilliseconds} ms');
-
-      if (e.response != null) {
-        print('Response Data: ${e.response?.data}');
-        return e.response?.data; // Returning the raw response data in case of an error
-      }
-
-      String errorDescription = handleDioError(e);
-      throw Exception(errorDescription);
-    } catch (e) {
-      final duration = DateTime.now().difference(startTime);
-      print('Request Duration: ${duration.inMilliseconds} ms');
-
-      print('Error: $e');
-      throw Exception('Unexpected error occurred.');
-    }
-  }
-
 
   String handleDioError(DioException e) {
     switch (e.type) {
@@ -168,6 +127,24 @@ class NewsServices {
         return 'Unexpected error occurred.';
     }
   }
+}
 
+class DioClient {
+  late Dio _dio;
 
+  DioClient() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: BaseStrings.baseUrl,
+        headers: {
+          'x-rapidapi-key': BaseStrings.apiKey,
+          'x-rapidapi-host': BaseStrings.hosting,
+        },
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 30),
+      ),
+    );
+  }
+
+  Dio get dio => _dio;
 }

@@ -102,9 +102,9 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       ),
     );
   }
-  // @override
-  // void dispose() {
-  //   pageController.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
 }
