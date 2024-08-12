@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -24,7 +25,7 @@ class NewsController extends GetxController {
   final Rx<TextEditingController> searchController = TextEditingController().obs;
 
 
-  RxInt selectedIndexes = 0.obs;
+  var  selectedIndexes = 0.obs;
   RxBool isPadding = false.obs;
   RxBool startAnimation = false.obs;
   RxBool isLoading = false.obs;
@@ -66,7 +67,8 @@ class NewsController extends GetxController {
 print("on Init initDataAndApi");
      initDataAndApi();
     super.onInit();
-
+selectedIndexes.value = 0;
+print("************${selectedIndexes.value}************");
   }
 
   Future<void> initDataAndApi() async {
@@ -110,22 +112,32 @@ print("on Init initDataAndApi");
      await fetchArticlesByCategory(categories[selectedCategory.value]);
   }
 
-  Future<void> searchNewsList(String query) async {
-    isSearchLoading.value = true;
-
-    errorMessage('');
-    try {
-      final searchResults = await searchNewsRepo?.getSearchNewSList(query);
-      if (searchResults?.data != null) {
-        results.assignAll(searchResults?.data ?? []);
-      } else {
-        results.clear();
+  Future<void> searchNewsList(String query,BuildContext context) async {
+    if(query.length == 3 ){
+      isSearchLoading.value = true;
+      errorMessage('');
+      try {
+        final searchResults = await searchNewsRepo?.getSearchNewSList(query);
+        if (searchResults?.data != null) {
+          results.assignAll(searchResults?.data ?? []);
+        } else {
+          results.clear();
+        }
+      } catch (e) {
+        // Get.snackbar(BaseStrings.error, e.toString());
+      } finally {
+        isSearchLoading(false);
       }
-    } catch (e) {
-      // Get.snackbar(BaseStrings.error, e.toString());
-    } finally {
-      isSearchLoading(false);
     }
+    else{
+      searchController.value.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Search term must be exactly 3 characters long'),
+        ),
+      );
+    }
+
   }
 
   Future<void> fetchArticlesByCategory(String category) async {

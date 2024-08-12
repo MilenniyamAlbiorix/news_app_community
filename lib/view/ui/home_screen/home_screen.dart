@@ -5,7 +5,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:intl/intl.dart';
-
 import 'package:news_app_community/view/ui/home_screen/topic_news_card_widget.dart';
 import 'package:news_app_community/viewModel/News%20Controller.dart';
 import 'package:news_app_community/res/const/Colors.dart';
@@ -40,7 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 () => TextFormField(
                   focusNode: searchFoCus,
                   textInputAction: TextInputAction.done,
-                  onEditingComplete: () {},
+                  onEditingComplete: () {
+                    setState(() {
+                      searchFoCus.unfocus();
+                      newsController.searchNewsList(
+                          newsController.searchController.value.text,context);
+                    });
+                  },
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     hintText: BaseStrings.search,
@@ -49,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         searchFoCus.unfocus();
                         newsController.searchNewsList(
-                            newsController.searchController.value.text);
+                            newsController.searchController.value.text,context);
                       },
                     ),
                     hintStyle: getTheme(context: context)
@@ -134,7 +139,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ).paddingOnly(left: 8),
                           ),
                           GestureDetector(
-                            onTap: () => Get.toNamed(BaseRoute.searchScreen),
+
+                            onTap: () async{
+                               // await newsController.fetchTopHeadline();
+                              Get.toNamed(BaseRoute.searchScreen,);
+                            } ,
                             child: Row(
                               children: [
                                 Text(
@@ -236,76 +245,81 @@ class _HomeScreenState extends State<HomeScreen> {
                                       itemCount:
                                           newsController.topicHeadline.length,
                                       itemBuilder: (context, index) {
-                                        return Container(
-                                          width: 345,
-                                          height: 128,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            image: DecorationImage(
-                                              onError:
-                                                  (exception, stackTrace) =>
-                                                      Image.asset(
-                                                          BaseAssets.topNews),
-                                              image: NetworkImage(newsController
-                                                      .topicHeadline[index]
-                                                      .photoUrl ??
-                                                  ""),
-                                              // Replace with your image asset
-                                              fit: BoxFit.cover,
+                                        return GestureDetector(
+                                          onTap: (){
+                                            Get.toNamed(BaseRoute.newsDetailsScreen,arguments:newsController.topicHeadline[index]);
+                                          },
+                                          child: Container(
+                                            width: 345,
+                                            height: 128,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              image: DecorationImage(
+                                                onError:
+                                                    (exception, stackTrace) =>
+                                                        Image.asset(
+                                                            BaseAssets.topNews),
+                                                image: NetworkImage(newsController
+                                                        .topicHeadline[index]
+                                                        .photoUrl ??
+                                                    ""),
+                                                // Replace with your image asset
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
-                                          ),
-                                          child: Stack(
-                                            children: [
-                                              Positioned(
-                                                  top: 10,
-                                                  left: 10,
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 300.w,
-                                                        child: Text(
-                                                          maxLines: 3,
-                                                          newsController
-                                                                  .topicHeadline[
-                                                                      index]
-                                                                  .title ??
-                                                              "",
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 14.sp,
+                                            child: Stack(
+                                              children: [
+                                                Positioned(
+                                                    top: 10,
+                                                    left: 10,
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 300.w,
+                                                          child: Text(
+                                                            maxLines: 3,
+                                                            newsController
+                                                                    .topicHeadline[
+                                                                        index]
+                                                                    .title ??
+                                                                "",
+                                                            style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 14.sp,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  )),
-                                              const Positioned(
-                                                bottom: 10,
-                                                left: 10,
-                                                child: Text(
-                                                  'Matt Villano',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
+                                                      ],
+                                                    )),
+                                                const Positioned(
+                                                  bottom: 10,
+                                                  left: 10,
+                                                  child: Text(
+                                                    '',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              const Positioned(
-                                                bottom: 10,
-                                                right: 10,
-                                                child: Text(
-                                                  'Sunday, 9 May 2021',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
+                                                const Positioned(
+                                                  bottom: 10,
+                                                  right: 10,
+                                                  child: Text(
+                                                    'Sunday, 9 May 2021',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ).paddingSymmetric(vertical: 8.0);
+                                              ],
+                                            ),
+                                          ).paddingSymmetric(vertical: 8.0),
+                                        );
                                       },
                                     ),
                                   )

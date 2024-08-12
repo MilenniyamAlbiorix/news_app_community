@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_instance/get_instance.dart';
+import 'package:news_app_community/res/const/Colors.dart';
 import 'package:news_app_community/viewModel/News%20Controller.dart';
 import '../../../res/const/strings.dart';
 import '../../../res/functions/base_funcations.dart';
@@ -46,17 +47,19 @@ class _FavroiteScreenState extends State<FavroiteScreen> {
         ),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          newsController.items.isNotEmpty ?
           Expanded(
             child: ListView.builder(
               itemCount: newsController.items.length ?? 0 ,
               itemBuilder: (context, index) {
                 var item =  newsController.items[index];
-                return newsController.items.isNotEmpty ?
-                  notificationListing(context: context,title:item.title, imageUrl: item.photoUrl) : const Text(BaseStrings.noDataFound);
+                return
+                  notificationListing(context: context,title:item.title, imageUrl: item.photoUrl);
               },
             ),
-          ),
+          )  : const Center(child: Text(BaseStrings.noDataFound,style: TextStyle(color: BaseColors.blackColors),)),
         ],
       ),
     );

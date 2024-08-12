@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../res/const/Colors.dart';
-import '../../../res/const/assets.dart';
+
 import '../../../res/const/strings.dart';
 import '../../../res/functions/base_funcations.dart';
 
@@ -59,14 +59,14 @@ class  SearchHelper {
     );
  }
 
-Widget filterListingView(){
+Widget filterListingView({required String? image ,required String title,required String datE}){
     return Container(
       width: 345,
       height: 128,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
-        image: const DecorationImage(
-          image: AssetImage(BaseAssets.frame),
+        image:  DecorationImage(
+          image: NetworkImage(image ?? ""),
           // Replace with your image asset
           fit: BoxFit.cover,
         ),
@@ -82,7 +82,7 @@ Widget filterListingView(){
                   Flexible(
                     child: Text(
                       maxLines: 2,
-                      '5 things to know about the "conundrum" of lupus',
+                      title ?? "",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14.sp,

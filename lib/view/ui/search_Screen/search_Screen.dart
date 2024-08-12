@@ -1,7 +1,9 @@
-import 'dart:ui';
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:news_app_community/route/route.dart';
 import 'package:news_app_community/viewModel/News%20Controller.dart';
 import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/res/functions/base_funcations.dart';
@@ -214,11 +216,20 @@ class _SearchScreenState extends State<SearchScreen> {
               }),
           Expanded(
             child: ListView.builder(
-              itemCount: 8,
+              itemCount: newsController.topHeadlinesList.length ?? 0,
               itemBuilder: (context, index) {
-                return searchHelper
-                    .filterListingView()
-                    .paddingSymmetric(horizontal: 15);
+                return GestureDetector(
+                  onTap: (){
+                    Get.toNamed(BaseRoute.newsDetailsScreen,arguments: newsController.topHeadlinesList[index]);
+                  },
+                  child: searchHelper
+                      .filterListingView(
+                    title: newsController.topHeadlinesList[index].title.toString(),
+                    image: newsController.topHeadlinesList[index].photoUrl.toString(),
+                    datE: "",
+                  )
+                      .paddingSymmetric(horizontal: 15),
+                );
               },
             ),
           )

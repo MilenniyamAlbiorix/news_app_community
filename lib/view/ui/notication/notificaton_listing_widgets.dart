@@ -27,7 +27,7 @@ Widget notificationListing(
           decoration: BoxDecoration(
               image: DecorationImage(
                   onError: (exception, stackTrace) =>
-                      Image.asset(BaseAssets.topNews),
+                      const AssetImage(BaseAssets.frame),
                   image: NetworkImage(imageUrl ?? ""),fit: BoxFit.cover),
               color: BaseColors.blackColors,
               borderRadius: BorderRadius.circular(12)),
