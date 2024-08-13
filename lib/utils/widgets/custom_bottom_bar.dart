@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:news_app_community/res/const/Colors.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -29,13 +30,18 @@ class CustomBottomNavigationBar extends StatelessWidget {
         ],
       ),
       child: BottomNavigationBar(
+
+        landscapeLayout: BottomNavigationBarLandscapeLayout.linear,
         selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: Colors.black,
         type: BottomNavigationBarType.fixed,
+        selectedIconTheme:  IconThemeData(color: BaseColors.blackColors, size: 24.sp),
         selectedLabelStyle: TextStyle(color: Colors.blue, fontSize: 10.sp),
         selectedFontSize: 10.sp,
+        iconSize: 25.h,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
         elevation: 0.0,
-        backgroundColor: Colors.transparent,
         items: items,
         currentIndex: currentIndex,
         onTap: onTap,

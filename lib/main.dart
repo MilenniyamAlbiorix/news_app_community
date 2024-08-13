@@ -43,8 +43,6 @@ class MyApp extends StatelessWidget {
       initialRoute: BaseRoute.bottomBarScreen,
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home: ScreenUtilInit(
-          builder: (context, child) => BottomBarScreen()),
-    );
+      home:BottomBarScreen(),);
   }
 }

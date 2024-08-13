@@ -11,6 +11,7 @@ import 'package:news_app_community/repositories/search_news/search_news_repo.dar
 import 'package:news_app_community/repositories/top_headline/top_headline_repo.dart';
 import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/view/ui/Favorite_Screen/favroite_screen.dart';
+import '../res/functions/base_funcations.dart';
 import '../utils/widgets/debounce_widgets.dart';
 import '../view/ui/home_screen/home_screen.dart';
 import '../view/ui/search_Screen/search_Screen.dart';
@@ -22,11 +23,11 @@ class NewsController extends GetxController {
 
   NewsController({required this.topHeadlineRepo, this.searchNewsRepo});
 
-  final Rx<TextEditingController> searchController = TextEditingController().obs;
+  final Rx<TextEditingController> searchController =
+      TextEditingController().obs;
 
-
-  var  selectedIndexes = 0.obs;
-  RxBool isPadding = false.obs;
+  var selectedIndexes = 0.obs;
+  RxBool isPadding = true.obs;
   RxBool startAnimation = false.obs;
   RxBool isLoading = false.obs;
   RxBool isSearchLoading = false.obs;
@@ -38,13 +39,13 @@ class NewsController extends GetxController {
   var errorMessage = ''.obs;
   RxList<Datum> results = <Datum>[].obs;
   RxList<Datum> topicHeadline = <Datum>[].obs;
-  var topHeadLineDetails;
+  // var topHeadLineDetails;
 
   final GetStorage storage = GetStorage();
   var items = <Datum>[].obs;
 
   RxBool atEdge = false.obs;
-   RxList<Widget> screens = [
+  RxList<Widget> screens = [
     HomeScreen(),
     const FavroiteScreen(),
     const SearchScreen(),
@@ -63,16 +64,16 @@ class NewsController extends GetxController {
 
   @override
   void onInit() {
-
-print("on Init initDataAndApi");
-     initDataAndApi();
+    // initDataAndApi();
     super.onInit();
-selectedIndexes.value = 0;
-print("************${selectedIndexes.value}************");
+    selectedIndexes.value = 0;
+    if (kDebugMode) {
+      print("************: ${selectedIndexes.value}");
+    }
   }
 
+
   Future<void> initDataAndApi() async {
-    print("In initDataAndApi");
     await fetchTopHeadline();
     loadItemsFromStorage();
   }
@@ -92,6 +93,7 @@ print("************${selectedIndexes.value}************");
 
   Future<void> fetchTopHeadline() async {
     isLoading(true);
+    isTopicLoading.value = true;
 
     try {
       final response = await topHeadlineRepo.getTopHeadline();
@@ -102,18 +104,39 @@ print("************${selectedIndexes.value}************");
         print("*********************************${topHeadlinesList.value}");
       }
     } catch (e) {
-   /*   Get.snackbar(
+      /*   Get.snackbar(
         BaseStrings.error,
         e.toString(),
       );*/
     } finally {
+      isTopicLoading.value = false;
       isLoading(false);
     }
-     await fetchArticlesByCategory(categories[selectedCategory.value]);
+    // await fetchArticlesByCategory(categories[selectedCategory.value]);
   }
 
-  Future<void> searchNewsList(String query,BuildContext context) async {
-    if(query.length == 3 ){
+  Future<void> searchNewsList(String query, BuildContext context) async {
+    if (query.length < 3) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Warring'),
+            content: const Text('Please enter at least 3 characters to search.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+    else{
       isSearchLoading.value = true;
       errorMessage('');
       try {
@@ -124,36 +147,27 @@ print("************${selectedIndexes.value}************");
           results.clear();
         }
       } catch (e) {
-        // Get.snackbar(BaseStrings.error, e.toString());
+         Get.snackbar(BaseStrings.error, e.toString());
       } finally {
         isSearchLoading(false);
       }
-    }
-    else{
-      searchController.value.clear();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Search term must be exactly 3 characters long'),
-        ),
-      );
     }
 
   }
 
   Future<void> fetchArticlesByCategory(String category) async {
-
     isTopicLoading(true);
     topicHeadline.value.clear();
     try {
-      print("fetchArticlesByCategory started");
-
       final headlines = await topHeadlineRepo.getTopicHeadline(category);
-      print("${headlines} Hedlines");
+      if (kDebugMode) {
+        print("${headlines} Hedlines");
+      }
       topicHeadline.value.clear();
       if (headlines.data != null || (headlines.data ?? []).isNotEmpty) {
-        topicHeadline.addAll(headlines.data ?? []) ;
+        topicHeadline.addAll(headlines.data ?? []);
       }
-       if (kDebugMode) {
+      if (kDebugMode) {
         print("-----------------------------------:${topicHeadline.value}");
       }
     } catch (e) {
@@ -170,7 +184,8 @@ print("************${selectedIndexes.value}************");
   }
 
   void addItem(List<Datum> newItems) {
-    final List<dynamic> storedItems = storage.read<List<dynamic>>('items') ?? [];
+    final List<dynamic> storedItems =
+        storage.read<List<dynamic>>('items') ?? [];
     final List<Datum> existingItems = storedItems.map((item) {
       return Datum.fromJson(item as Map<String, dynamic>);
     }).toList();
@@ -182,9 +197,9 @@ print("************${selectedIndexes.value}************");
     storage.write('items', updatedItems);
   }
 
-
   void loadItemsFromStorage() {
-    final List<dynamic> storedItems = storage.read<List<dynamic>>('items') ?? [];
+    final List<dynamic> storedItems =
+        storage.read<List<dynamic>>('items') ?? [];
 
     final List<Datum> itemsList = storedItems.map((item) {
       return Datum.fromJson(item as Map<String, dynamic>);
@@ -192,6 +207,7 @@ print("************${selectedIndexes.value}************");
 
     items.value.assignAll(itemsList);
   }
+
   @override
   void dispose() {
     super.dispose();

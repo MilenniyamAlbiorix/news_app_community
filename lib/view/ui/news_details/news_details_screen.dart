@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
@@ -24,11 +25,26 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
   final ScrollController _scrollController = ScrollController();
   bool isScrollingUp = true;
 
+  bool showGlassmorphism = true;
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_scrollListener);
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 0 && showGlassmorphism) {
+        setState(() {
+          showGlassmorphism = false;
+        });
+      } else if (_scrollController.offset <= 0 && !showGlassmorphism) {
+        setState(() {
+          showGlassmorphism = true;
+        });
+      }
+    });
   }
+ /* void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }*/
 
   void _scrollListener() {
     if (_scrollController.position.userScrollDirection ==
@@ -58,8 +74,9 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    newsController.topHeadLineDetails = Get.arguments;
-    return Scaffold(
+    // newsController.topHeadLineDetails = Get.arguments;
+    return
+      Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: Container(
         height: 56.h,
@@ -73,8 +90,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
         child: FloatingActionButton(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          shape:
-              const CircleBorder(side: BorderSide(color: Colors.transparent)),
+          shape: const CircleBorder(side: BorderSide(color: Colors.transparent)),
           onPressed: () {
             final arguments = Get.arguments;
             final List<Datum> list;
@@ -85,7 +101,6 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
             } else {
               return; // Or handle the error as needed
             }
-
             newsController.addItem(list);
             const GetSnackBar(message: BaseStrings.newSave,title: BaseStrings.save,snackPosition: SnackPosition.BOTTOM,);
             newsController.loadItemsFromStorage();
@@ -124,58 +139,49 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
               : const NeverScrollableScrollPhysics(),
           slivers: <Widget>[
             SliverPersistentHeader(
+              floating: true,
               pinned: true,
-              floating: false,
-              delegate: CustomSliverDelegate(
-                expandedHeight: 200,
-              ),
+              delegate: CustomAppBar(),
             ),
             SliverFillRemaining(
-              child: Obx(
-                () => ListView(
-                  padding: !newsController.isPadding.value
-                      ? const EdgeInsets.all(0)
-                      : EdgeInsets.only(
-                          top: MediaQuery.of(context).padding.top),
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        style: getTheme(context: context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(
-                                color: BaseColors.backBtnColor,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600),
-                        children: [
-                          TextSpan(
-                            text: 'LONDON',
-                            style: getTheme(context: context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                    color: BaseColors.backBtnColor,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.bold),
-                          ),
-                          TextSpan(
-                              text:
-                                  "- ${newsController.topHeadLineDetails.title} " ??
-                                      ""),
-                        ],
+              fillOverscroll: true,
+              child: ListView(
+                padding: EdgeInsets.zero,
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  RichText(
+                    text: const TextSpan(
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w600,
                       ),
-                      textAlign: TextAlign.justify,
+                      children: [
+                        TextSpan(
+                          text: 'LONDON',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: BaseStrings.longDesc,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                    textAlign: TextAlign.justify,
+                  ).paddingSymmetric(horizontal: 14),
+                ],
+              )
               ),
-            ),
+
           ],
         ),
       ),
     );
   }
+
 }
 
 class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
@@ -195,9 +201,9 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
     final appBarSize = expandedHeight - shrinkOffset;
     final proportion = 2 - (expandedHeight / appBarSize);
     final percent = proportion < 0 || proportion > 1 ? 0.0 : proportion;
-    final date = DateTime.parse(
-        newsController.topHeadLineDetails.publishedDatetimeUtc.toString());
-    String formattedDate = DateFormat('EEEE, d MMMM yyyy').format(date);
+    // final date = DateTime.parse(
+    //     newsController.topHeadLineDetails.publishedDatetimeUtc.toString());
+    // String formattedDate = DateFormat('EEEE, d MMMM yyyy').format(date);
     return SizedBox(
       height: expandedHeight + expandedHeight / 2,
       child: Stack(
@@ -217,7 +223,8 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                       errorBuilder: (context, error, stackTrace) =>
                           Image.asset(BaseAssets.topNews),
                       width: Get.width,
-                      newsController.topHeadLineDetails.photoUrl ?? "",
+                      ""
+                      // newsController.topHeadLineDetails.photoUrl ?? "",
                     ),
                   ),
                 ),
@@ -255,10 +262,10 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                               ),
                             ),
                           ),
-                        )),
+                        ),),
                   ),
                 ),
-              ]),
+              ],),
             ),
           ),
           Positioned(
@@ -292,7 +299,8 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    formattedDate.toString(),
+                                    "",
+                                    // formattedDate.toString(),
                                     // args.name?? "",
                                     style: getTheme(context: context)
                                         .textTheme
@@ -302,8 +310,9 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                                             fontSize: 12.sp),
                                   ),
                                   Text(
-                                    newsController.topHeadLineDetails.title
-                                        .toString(),
+                                    "",
+                                    // newsController.topHeadLineDetails.title
+                                    //     .toString(),
                                     style: getTheme(context: context)
                                         .textTheme
                                         .titleMedium
@@ -312,8 +321,9 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                                             fontSize: 16.sp),
                                   ),
                                   Text(
-                                    "Published by ${newsController.topHeadLineDetails.sourceName}" ??
-                                        "",
+                                    "",
+                                    // "Published by ${newsController.topHeadLineDetails.sourceName}" ??
+                                    //     "",
                                     style: getTheme(context: context)
                                         .textTheme
                                         .titleMedium
@@ -347,4 +357,235 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return true;
   }
+}
+class CustomAppBar extends SliverPersistentHeaderDelegate {
+  final bottomHeight = 60;
+  final extraRadius = 5;
+  @override
+  Widget build(context, shrinkOffset, overlapsContent) {
+    final imageTop =
+    -shrinkOffset.clamp(0.0, maxExtent - minExtent - bottomHeight);
+
+    final double opacity = shrinkOffset == minExtent
+        ? 0
+        : 1 - (shrinkOffset.clamp(minExtent, minExtent + 30) - minExtent) / 30;
+    final double tiltOpacity = shrinkOffset == maxExtent
+        ? 1 - (shrinkOffset.clamp(maxExtent, maxExtent + 30) - maxExtent) / 30
+        : 0;
+    return Stack(
+      children: [
+        // Positioned(
+        //   bottom: 0,
+        //   right: 20,
+        //   left: 45,
+        //   child: Row(
+        //     children: [
+        //       Transform.scale(
+        //         scale: 1.9 - clowsingRate,
+        //         alignment: Alignment.bottomCenter,
+        //         child: const _Avatar(),
+        //       ),
+        //
+        //       // const _Button(),
+        //     ],
+        //   ),
+        // ),
+        Stack(
+          children: [
+            Positioned(
+              top: imageTop,
+              left: 0,
+              right: 0,
+              child: ClipPath(
+                child: SizedBox(
+                  height: maxExtent - bottomHeight,
+                  child: ColoredBox(
+                    color:Colors.grey,
+                    child: Opacity(
+                      opacity: opacity,
+                      child: Image.network(
+                        '',
+                        errorBuilder: (context, error, stackTrace) => Image.asset(BaseAssets.group),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 150, // Adjust position as needed
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child:  Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        width: 311.w,
+                        decoration: BoxDecoration(
+                          color: BaseColors.bluerColor.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            width: 0,
+                            color: Colors.white.withOpacity(0.4),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16, top: 8, right: 16, bottom: 0),
+                          child: Wrap(
+                            children: [
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Sunday, 9 May 2021",
+                                    // formattedDate.toString(),
+                                    // args.name?? "",
+                                    style: getTheme(context: context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                        color: BaseColors.backBtnColor,
+                                        fontSize: 12.sp),
+                                  ),
+                                  Text(
+                                    "Crypto investors should be prepared to lose all their money, BOE governor says",
+                                    // newsController.topHeadLineDetails.title
+                                    //     .toString(),
+                                    style: getTheme(context: context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                        color: BaseColors.backBtnColor,
+                                        fontSize: 16.sp),
+                                  ),
+                                  Text(
+                                    "Published by Ryan Browne",
+                                    // "Published by ${newsController.topHeadLineDetails.sourceName}" ??
+                                    //     "",
+                                    style: getTheme(context: context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                      color: BaseColors.backBtnColor,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),),
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+            top: MediaQuery.of(context).padding.top + 5,
+            left: 10,
+            right: 10,
+            child:  Row(
+              children: [
+                _IconButton(
+onTap: (){
+  Navigator.of(context).pop();
+},
+                  icon: Icons.arrow_back,
+                ),
+
+
+
+              ],
+            )),
+        Positioned(
+            top: MediaQuery.of(context).padding.top + 5,
+            left: 10,
+            right: 10,
+            child:   Center(child: Opacity(opacity: tiltOpacity,child: const Text("Tilt"))),),
+      ],
+    );
+  }
+
+  @override
+  double get maxExtent => 250;
+
+  @override
+  double get minExtent => 100;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
+}
+
+class _IconButton extends StatelessWidget {
+  const _IconButton({
+    required this.icon,
+    required this.onTap
+
+  });
+
+  final IconData icon;
+  final GestureTapCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap!,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            height: 32.w,
+            width: 32.w,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              border: Border.all(
+                width: 0,
+                color: Colors.white.withOpacity(0.2),
+              ),
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: BaseColors.newsbackbtnColor,
+                size: 14,
+              ),
+            ),
+          ),
+        ),
+      ),);
+  }
+}
+
+class InvertedCircleClipper extends CustomClipper<Path> {
+  const InvertedCircleClipper({
+    required this.offset,
+    required this.radius,
+  });
+  final Offset offset;
+  final double radius;
+
+  @override
+  Path getClip(size) {
+    return Path()
+      ..addOval(Rect.fromCircle(
+        center: offset,
+        radius: radius,
+      ))
+      ..addRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height))
+      ..fillType = PathFillType.evenOdd;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }

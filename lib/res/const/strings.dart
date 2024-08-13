@@ -3,7 +3,7 @@ class BaseStrings {
 ///API URL
   static const String baseUrl  = "https://real-time-news-data.p.rapidapi.com/";
   static const String hosting  = "real-time-news-data.p.rapidapi.com";
-  static const String apiKey  = "a595875015mshf45af2253fe21e8p1f866cjsn8a04d7edf460";
+  static const String apiKey  = "57e61b6fd6f14eb8a37d767ba15e272e";
   static const String latestNews  = "Latest News";
   static const String newSave  = "New Saved";
 
@@ -22,6 +22,7 @@ class BaseStrings {
   static const String profile = "Profile";
   static const String error = "Error";
   static const String noDataFound = "Not data Available";
+  static const String longDesc = "a long description of an image. When images are complex, simple alternative text is not enough. This is especially common in instructional content that students are expected to learn from, such as diagrams, charts, and graphs.";
 
 
 }

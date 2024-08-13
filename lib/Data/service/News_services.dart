@@ -7,6 +7,8 @@ import 'package:news_app_community/Data/service/api_ends_points.dart';
 import 'dart:convert';
 import 'package:news_app_community/model/top_Headlines_model.dart';
 import 'package:news_app_community/res/const/strings.dart';
+import 'package:news_app_community/res/enums/enums.dart';
+import '../../res/functions/base_funcations.dart';
 
 class NewsApiServices {
   final DioClient dioClient;
@@ -17,19 +19,26 @@ class NewsApiServices {
 
   ///fetchTopHeadline
   Future<TopHeadlines> fetchTopHeadlines() async {
-    final response = await http.get(
-      Uri.parse(BaseStrings.baseUrl + ApiEndPoints.getTopHeadline),
-      headers: {
-        'x-rapidapi-key': BaseStrings.apiKey,
-        'x-rapidapi-host': BaseStrings.hosting,
-      },
-    );
-    if (response.statusCode == 200) {
-      return TopHeadlines.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load top headlines');
+    try {
+      final response = await http.get(
+        Uri.parse(BaseStrings.baseUrl + ApiEndPoints.getTopHeadline),
+        headers: {
+          'x-rapidapi-key': BaseStrings.apiKey,
+          'x-rapidapi-host': BaseStrings.hosting,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return TopHeadlines.fromJson(jsonDecode(response.body));
+      } else {
+        // showCustomSnackBar(context: Get.context!,type: SnackBarType.error,message:.toString());
+        throw Exception(handleStatusCode(response.statusCode));
+      }
+    } catch (error) {
+      throw Exception('Error fetching top headlines: $error');
     }
   }
+
 
 
 
@@ -51,8 +60,7 @@ class NewsApiServices {
         throw Exception('Failed to load topic headlines');
       }
     } on DioException catch (e) {
-print("Dio Expceptions ${e.error.toString()}");
-print("Dio Expceptions ${e.error}");
+      showCustomSnackBar(context: Get.context!,type: SnackBarType.error,message: e.response!.data['message'].toString());
       if (e.response != null) {
         if (kDebugMode) {
           print('Response Data: ${e.response?.data}');
@@ -64,7 +72,7 @@ print("Dio Expceptions ${e.error}");
       String errorDescription = handleDioError(e);
       throw Exception(errorDescription);
     } catch (e) {
-      GetSnackBar(title: BaseStrings.error,message: e.toString(),);
+
       print('Error: $e');
       throw Exception('Unexpected error occurred.');
     }
