@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:news_app_community/route/route.dart';
 import 'package:news_app_community/viewModel/News%20Controller.dart';
 import 'package:news_app_community/res/const/strings.dart';
@@ -222,6 +223,11 @@ class _SearchScreenState extends State<SearchScreen> {
               child: ListView.builder(
                 itemCount: newsController.topHeadlinesList.length ?? 0,
                 itemBuilder: (context, index) {
+                  final date = DateTime.parse(newsController
+                      .topHeadlinesList[index].publishedAt
+                      .toString());
+                  String formattedDate =
+                  DateFormat('EEEE, d MMMM yyyy').format(date);
                   return
                     GestureDetector(
                     onTap: (){
@@ -230,10 +236,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: searchHelper
                         .filterListingView(
                       title: newsController.topHeadlinesList[index].title.toString(),
-                      image: newsController.topHeadlinesList[index].photoUrl.toString(),
-                      datE: "",
-                    )
-                        .paddingSymmetric(horizontal: 15),
+                      image: newsController.topHeadlinesList[index].urlToImage.toString() ,
+                      datE: formattedDate ,
+                      author: newsController.topHeadlinesList[index].author.toString()
+                    ).paddingSymmetric(horizontal: 15),
                   ) ;
                 },
               ),

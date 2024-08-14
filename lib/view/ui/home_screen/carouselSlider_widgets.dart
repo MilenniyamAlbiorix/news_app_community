@@ -43,7 +43,7 @@ Widget carouselSliderWidgets() {
                                         (context, error, stackTrace) =>
                                             Image.asset(BaseAssets.topNews),
                                     height: 200.h,
-                                    item.photoUrl ?? "",
+                                    item.urlToImage ?? "",
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -75,7 +75,7 @@ Widget carouselSliderWidgets() {
                                   child: SizedBox(
                                     width: 240.w,
                                     child: Text(
-                                      item.snippet ?? "",
+                                      item.description ?? "",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 10.sp,

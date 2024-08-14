@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:news_app_community/res/const/assets.dart';
 import '../../../res/const/Colors.dart';
-
 import '../../../res/const/strings.dart';
 import '../../../res/functions/base_funcations.dart';
 
@@ -59,14 +59,15 @@ class  SearchHelper {
     );
  }
 
-Widget filterListingView({required String? image ,required String title,required String datE}){
+Widget filterListingView({required String? image ,required String title,required String datE, required String author}){
     return Container(
-      width: 345,
-      height: 128,
+      width: 345.w,
+      height: 128.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         image:  DecorationImage(
-          image: NetworkImage(image ?? ""),
+          onError: (exception, stackTrace) => const AssetImage(BaseAssets.topNews),
+          image: (image ?? "").isNotEmpty || image == null ? NetworkImage(image ?? "",) : const AssetImage(BaseAssets.topNews),
           // Replace with your image asset
           fit: BoxFit.cover,
         ),
@@ -91,23 +92,23 @@ Widget filterListingView({required String? image ,required String title,required
                   ),
                 ],
               )),
-          const Positioned(
+           Positioned(
             bottom: 10,
             left: 10,
             child: Text(
-              'Matt Villano',
-              style: TextStyle(
+              author,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
               ),
             ),
           ),
-          const Positioned(
+           Positioned(
             bottom: 10,
             right: 10,
             child: Text(
-              'Sunday, 9 May 2021',
-              style: TextStyle(
+              datE ?? "",
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
               ),

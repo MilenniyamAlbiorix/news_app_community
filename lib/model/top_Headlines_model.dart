@@ -2,127 +2,100 @@ import 'dart:convert';
 
 class TopHeadlines {
   final String? status;
-  final String? requestId;
-  final List<Datum>? data;
+  final int? totalResults;
+  final List<Article>? articles;
 
   TopHeadlines({
     this.status,
-    this.requestId,
-    this.data,
+    this.totalResults,
+    this.articles,
   });
 
 
 
   factory TopHeadlines.fromJson(Map<String, dynamic> json) => TopHeadlines(
     status: json["status"],
-    requestId: json["request_id"],
-    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+    totalResults: json["totalResults"],
+    articles: json["articles"] == null ? [] : List<Article>.from(json["articles"]!.map((x) => Article.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "request_id": requestId,
-    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+    "status": status  ?? "",
+    "totalResults": totalResults  ?? "",
+    "articles": articles == null ? [] : List<dynamic>.from(articles!.map((x) => x.toJson())),
   };
 }
 
-class Datum {
+class Article {
+  final Source? source;
+  final String? author;
   final String? title;
-  final String? link;
-  final String? snippet;
-  final String? photoUrl;
-  final DateTime? publishedDatetimeUtc;
-  final String? sourceUrl;
-  final String? sourceName;
-  final String? sourceLogoUrl;
-  final String? sourceFaviconUrl;
-  final List<SubArticle>? subArticles;
-  final String? storyId;
+  final String? description;
+  final String? url;
+  final String? urlToImage;
+  final DateTime? publishedAt;
+  final String? content;
 
-  Datum({
+  Article({
+    this.source,
+    this.author,
     this.title,
-    this.link,
-    this.snippet,
-    this.photoUrl,
-    this.publishedDatetimeUtc,
-    this.sourceUrl,
-    this.sourceName,
-    this.sourceLogoUrl,
-    this.sourceFaviconUrl,
-    this.subArticles,
-    this.storyId,
+    this.description,
+    this.url,
+    this.urlToImage,
+    this.publishedAt,
+    this.content,
   });
 
-
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    title: json["title"] ?? "",
-    link: json["link"]?? "",
-    snippet: json["snippet"] ?? "",
-    photoUrl: json["photo_url"],
-    publishedDatetimeUtc: json["published_datetime_utc"] == null ? null : DateTime.parse(json["published_datetime_utc"]),
-    sourceUrl: json["source_url"] ?? "",
-    sourceName: json["source_name"] ?? "",
-    sourceLogoUrl: json["source_logo_url"] ?? "",
-    sourceFaviconUrl: json["source_favicon_url"] ?? "" ,
-    subArticles: json["sub_articles"] == null ? [] : List<SubArticle>.from(json["sub_articles"]?.map((x) => SubArticle.fromJson(x))),
-    storyId: json["story_id"] ?? "",
-  );
-
-  Map<String, dynamic> toJson() => {
-    "title": title ?? "",
-    "link": link ?? "",
-    "snippet": snippet ?? "",
-    "photo_url": photoUrl ?? "",
-    "published_datetime_utc": publishedDatetimeUtc?.toIso8601String(),
-    "source_url": sourceUrl ?? "",
-    "source_name": sourceName ?? "",
-    "source_logo_url": sourceLogoUrl ?? "",
-    "source_favicon_url": sourceFaviconUrl ?? "",
-    "sub_articles": subArticles == null ? [] : List<dynamic>.from(subArticles!.map((x) => x.toJson())),
-    "story_id": storyId,
-  };
-}
-
-class SubArticle {
-  final String? title;
-  final String? link;
-  final String? photoUrl;
-  final DateTime? publishedDatetimeUtc;
-  final String? sourceUrl;
-  final String? sourceLogoUrl;
-  final String? sourceFaviconUrl;
-
-  SubArticle({
-    this.title,
-    this.link,
-    this.photoUrl,
-    this.publishedDatetimeUtc,
-    this.sourceUrl,
-    this.sourceLogoUrl,
-    this.sourceFaviconUrl,
-  });
-
-  factory SubArticle.fromRawJson(String str) => SubArticle.fromJson(json.decode(str));
+  factory Article.fromRawJson(String str) => Article.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory SubArticle.fromJson(Map<String, dynamic> json) => SubArticle(
-    title: json["title"] ?? "",
-    link: json["link"] ?? "",
-    photoUrl: json["photo_url"] ?? "",
-    publishedDatetimeUtc: json["published_datetime_utc"] == null ? null : DateTime.parse(json["published_datetime_utc"]),
-    sourceUrl: json["source_url"] ??"",
-    sourceLogoUrl: json["source_logo_url"] ?? "",
-    sourceFaviconUrl: json["source_favicon_url"] ?? "",
+  factory Article.fromJson(Map<String, dynamic> json) => Article(
+    source: json["source"] == null ? null : Source.fromJson(json["source"]),
+    author: json["author"] ?? "",
+    title: json["title"]  ?? "",
+    description: json["description"]  ?? "",
+    url: json["url"] ?? "",
+    urlToImage: json["urlToImage"]  ?? "",
+    publishedAt: json["publishedAt"] == null ? null : DateTime.parse(json["publishedAt"]),
+    content: json["content"] ?? "" ,
   );
 
   Map<String, dynamic> toJson() => {
-    "title": title ?? "",
-    "link": link ?? "",
-    "photo_url": photoUrl ?? "",
-    "published_datetime_utc": publishedDatetimeUtc?.toIso8601String(),
-    "source_url": sourceUrl ?? "",
-    "source_logo_url": sourceLogoUrl ?? "",
-    "source_favicon_url": sourceFaviconUrl ??"",
+    "source": source?.toJson(),
+    "author": author  ?? "",
+    "title": title  ?? "",
+    "description": description  ?? "",
+    "url": url ?? "",
+    "urlToImage": urlToImage ?? "",
+    "publishedAt": publishedAt?.toIso8601String()  ?? "",
+    "content": content  ?? "",
   };
 }
+
+class Source {
+  final String id;
+  final String name;
+
+  Source({
+    required this.id,
+    required this.name,
+  });
+
+  factory Source.fromRawJson(String str) => Source.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory Source.fromJson(Map<String, dynamic> json) => Source(
+    id: json["id"] ?? '',
+    name: json["name"] ?? '',
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id ,
+    "name": name,
+  };
+}
+
+

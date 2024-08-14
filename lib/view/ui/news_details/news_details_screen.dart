@@ -26,6 +26,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
   bool isScrollingUp = true;
 
   bool showGlassmorphism = true;
+
   @override
   void initState() {
     super.initState();
@@ -41,7 +42,8 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
       }
     });
   }
- /* void initState() {
+
+  /* void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
   }*/
@@ -74,9 +76,8 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // newsController.topHeadLineDetails = Get.arguments;
-    return
-      Scaffold(
+    newsController.topHeadLineDetails = Get.arguments;
+    return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: Container(
         height: 56.h,
@@ -90,19 +91,24 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
         child: FloatingActionButton(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          shape: const CircleBorder(side: BorderSide(color: Colors.transparent)),
+          shape:
+              const CircleBorder(side: BorderSide(color: Colors.transparent)),
           onPressed: () {
             final arguments = Get.arguments;
-            final List<Datum> list;
-            if (arguments is List<Datum>) {
+            final List<Article> list;
+            if (arguments is List<Article>) {
               list = arguments;
-            } else if (arguments is Datum) {
+            } else if (arguments is Article) {
               list = [arguments];
             } else {
               return; // Or handle the error as needed
             }
             newsController.addItem(list);
-            const GetSnackBar(message: BaseStrings.newSave,title: BaseStrings.save,snackPosition: SnackPosition.BOTTOM,);
+            const GetSnackBar(
+              message: BaseStrings.newSave,
+              title: BaseStrings.save,
+              snackPosition: SnackPosition.BOTTOM,
+            );
             newsController.loadItemsFromStorage();
           },
           child: Image.asset(
@@ -144,44 +150,41 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
               delegate: CustomAppBar(),
             ),
             SliverFillRemaining(
-              fillOverscroll: true,
-              child: ListView(
-                padding: EdgeInsets.zero,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  RichText(
-                    text: const TextSpan(
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'LONDON',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.bold,
+                fillOverscroll: true,
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        children: [
+                          const TextSpan(
+                            text: '-  ',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        TextSpan(
-                          text: BaseStrings.longDesc,
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.justify,
-                  ).paddingSymmetric(horizontal: 14),
-                ],
-              )
-              ),
-
+                          TextSpan(
+                            text: newsController.topHeadLineDetails.description,
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.justify,
+                    ).paddingSymmetric(horizontal: 14),
+                  ],
+                )),
           ],
         ),
       ),
     );
   }
-
 }
 
 class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
@@ -201,9 +204,9 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
     final appBarSize = expandedHeight - shrinkOffset;
     final proportion = 2 - (expandedHeight / appBarSize);
     final percent = proportion < 0 || proportion > 1 ? 0.0 : proportion;
-    // final date = DateTime.parse(
-    //     newsController.topHeadLineDetails.publishedDatetimeUtc.toString());
-    // String formattedDate = DateFormat('EEEE, d MMMM yyyy').format(date);
+    final date = DateTime.parse(
+        newsController.topHeadLineDetails.publishedAt.toString());
+    String formattedDate = DateFormat('EEEE, d MMMM yyyy').format(date);
     return SizedBox(
       height: expandedHeight + expandedHeight / 2,
       child: Stack(
@@ -213,27 +216,28 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                 appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize + 50,
             child: Container(
               color: Colors.black26,
-              child: Stack(alignment: Alignment.topCenter, children: [
-                Opacity(
-                  opacity: percent,
-                  child: Center(
-                    child: Image.network(
-                      height: Get.height,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Image.asset(BaseAssets.topNews),
-                      width: Get.width,
-                      ""
-                      // newsController.topHeadLineDetails.photoUrl ?? "",
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  Opacity(
+                    opacity: percent,
+                    child: Center(
+                      child: Image.network(
+                        height: Get.height,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset(BaseAssets.topNews),
+                        width: Get.width,
+                        newsController.topHeadLineDetails.urlToImage ?? "",
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 00,
-                  left: 20,
-                  child: SafeArea(
-                    top: true,
-                    child: InkWell(
+                  Positioned(
+                    top: 00,
+                    left: 20,
+                    child: SafeArea(
+                      top: true,
+                      child: InkWell(
                         onTap: () {
                           newsController.atEdge.value = false;
                           Navigator.pop(Get.context!);
@@ -262,10 +266,12 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                               ),
                             ),
                           ),
-                        ),),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],),
+                ],
+              ),
             ),
           ),
           Positioned(
@@ -358,13 +364,20 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
     return true;
   }
 }
+
 class CustomAppBar extends SliverPersistentHeaderDelegate {
   final bottomHeight = 60;
   final extraRadius = 5;
+
+  final NewsController newsController = Get.find();
+
   @override
   Widget build(context, shrinkOffset, overlapsContent) {
+    final date = DateTime.parse(
+        newsController.topHeadLineDetails.publishedAt.toString());
+    String formattedDate = DateFormat('EEEE, d MMMM yyyy').format(date);
     final imageTop =
-    -shrinkOffset.clamp(0.0, maxExtent - minExtent - bottomHeight);
+        -shrinkOffset.clamp(0.0, maxExtent - minExtent - bottomHeight);
 
     final double opacity = shrinkOffset == minExtent
         ? 0
@@ -400,12 +413,13 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
                 child: SizedBox(
                   height: maxExtent - bottomHeight,
                   child: ColoredBox(
-                    color:Colors.grey,
+                    color: Colors.grey,
                     child: Opacity(
                       opacity: opacity,
                       child: Image.network(
-                        '',
-                        errorBuilder: (context, error, stackTrace) => Image.asset(BaseAssets.group),
+                        newsController.topHeadLineDetails.urlToImage ?? "",
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset(BaseAssets.group),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -414,102 +428,106 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
               ),
             ),
             Positioned(
-              top: 150, // Adjust position as needed
+              top: 150,
+              // Adjust position as needed
               left: 0,
               right: 0,
               bottom: 0,
-              child:  Padding(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Container(
-                        width: 311.w,
-                        decoration: BoxDecoration(
-                          color: BaseColors.bluerColor.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            width: 0,
-                            color: Colors.white.withOpacity(0.4),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, top: 8, right: 16, bottom: 0),
-                          child: Wrap(
-                            children: [
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Sunday, 9 May 2021",
-                                    // formattedDate.toString(),
-                                    // args.name?? "",
-                                    style: getTheme(context: context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                        color: BaseColors.backBtnColor,
-                                        fontSize: 12.sp),
-                                  ),
-                                  Text(
-                                    "Crypto investors should be prepared to lose all their money, BOE governor says",
-                                    // newsController.topHeadLineDetails.title
-                                    //     .toString(),
-                                    style: getTheme(context: context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                        color: BaseColors.backBtnColor,
-                                        fontSize: 16.sp),
-                                  ),
-                                  Text(
-                                    "Published by Ryan Browne",
-                                    // "Published by ${newsController.topHeadLineDetails.sourceName}" ??
-                                    //     "",
-                                    style: getTheme(context: context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                      color: BaseColors.backBtnColor,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      width: 311.w,
+                      decoration: BoxDecoration(
+                        color: BaseColors.bluerColor.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          width: 0,
+                          color: Colors.white.withOpacity(0.4),
                         ),
                       ),
-                    ),),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, top: 8, right: 16, bottom: 0),
+                        child: Wrap(
+                          children: [
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  formattedDate.toString(),
+                                  // args.name?? "",
+                                  style: getTheme(context: context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                          color: BaseColors.backBtnColor,
+                                          fontSize: 12.sp),
+                                ),
+                                Text(
+                                  newsController.topHeadLineDetails.title
+                                      .toString(),
+                                  style: getTheme(context: context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                          color: BaseColors.backBtnColor,
+                                          fontSize: 16.sp),
+                                ),
+                                Text(
+                                  "Published by ${newsController.topHeadLineDetails.author}" ??
+                                      "",
+                                  style: getTheme(context: context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        color: BaseColors.backBtnColor,
+                                        fontSize: 10,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
         ),
         Positioned(
-            top: MediaQuery.of(context).padding.top + 5,
-            left: 10,
-            right: 10,
-            child:  Row(
-              children: [
-                _IconButton(
-onTap: (){
-  Navigator.of(context).pop();
-},
-                  icon: Icons.arrow_back,
-                ),
-
-
-
-              ],
-            )),
+          top: MediaQuery.of(context).padding.top + 5,
+          left: 10,
+          right: 10,
+          child: Row(
+            children: [
+              _IconButton(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                icon: Icons.arrow_back,
+              ),
+            ],
+          ),
+        ),
         Positioned(
-            top: MediaQuery.of(context).padding.top + 5,
-            left: 10,
-            right: 10,
-            child:   Center(child: Opacity(opacity: tiltOpacity,child: const Text("Tilt"))),),
+          top: MediaQuery.of(context).padding.top + 13,
+          left: 20,
+          right: 10,
+
+          child: Center(
+              child: Opacity(
+                  opacity: tiltOpacity,
+                  child: SizedBox(
+                    width: 250.w,
+                      child: Text(newsController.topHeadLineDetails.title ?? "",overflow: TextOverflow.ellipsis,maxLines: 1,)))),
+        ),
       ],
     );
   }
@@ -526,11 +544,7 @@ onTap: (){
 }
 
 class _IconButton extends StatelessWidget {
-  const _IconButton({
-    required this.icon,
-    required this.onTap
-
-  });
+  const _IconButton({required this.icon, required this.onTap});
 
   final IconData icon;
   final GestureTapCallback? onTap;
@@ -563,7 +577,8 @@ class _IconButton extends StatelessWidget {
             ),
           ),
         ),
-      ),);
+      ),
+    );
   }
 }
 
@@ -572,6 +587,7 @@ class InvertedCircleClipper extends CustomClipper<Path> {
     required this.offset,
     required this.radius,
   });
+
   final Offset offset;
   final double radius;
 

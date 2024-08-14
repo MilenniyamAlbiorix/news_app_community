@@ -13,8 +13,8 @@ Widget newsCardWidgets(
       image:  DecorationImage(
         colorFilter:  ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.color),
         onError: (exception, stackTrace) => Image.asset(BaseAssets.topNews),
-        image: NetworkImage(imageUrl ?? ""),
-        // Replace with your image asset
+        image: (imageUrl ?? "").isNotEmpty || imageUrl !=null ? NetworkImage(imageUrl ?? "") :const AssetImage(BaseAssets.topNews) ,
+
         fit: BoxFit.cover,
       ),
     ),

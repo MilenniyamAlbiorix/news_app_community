@@ -1,10 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:news_app_community/Data/service/api_ends_points.dart';
-import 'dart:convert';
+
 import 'package:news_app_community/model/top_Headlines_model.dart';
 import 'package:news_app_community/res/const/strings.dart';
 import 'package:news_app_community/res/enums/enums.dart';
@@ -18,13 +16,13 @@ class NewsApiServices {
 
 
   ///fetchTopHeadline
-  Future<TopHeadlines> fetchTopHeadlines() async {
+ /* Future<TopHeadlines> fetchTopHeadlines() async {
     try {
       final response = await http.get(
         Uri.parse(BaseStrings.baseUrl + ApiEndPoints.getTopHeadline),
         headers: {
           'x-rapidapi-key': BaseStrings.apiKey,
-          'x-rapidapi-host': BaseStrings.hosting,
+          // 'x-rapidapi-host': BaseStrings.hosting,
         },
       );
 
@@ -37,6 +35,24 @@ class NewsApiServices {
     } catch (error) {
       throw Exception('Error fetching top headlines: $error');
     }
+  }*/
+  Future<TopHeadlines> fetchTopHeadlines({String country = 'us'}) async {
+    try {
+      final response = await dioClient.dio.get(
+        ApiEndPoints.getTopHeadline,
+        queryParameters: {
+          'country': country,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return TopHeadlines.fromJson(response.data);
+      } else {
+        throw Exception(handleStatusCode(int.parse(response.statusCode.toString())));
+      }
+    } catch (error) {
+      throw Exception('Error fetching top headlines: $error');
+    }
   }
 
 
@@ -45,12 +61,9 @@ class NewsApiServices {
   Future<TopHeadlines> fetchTopicHeadlines(String topic) async {
     try {
       final response = await dioClient.dio.get(
-        ApiEndPoints.getTopicHeadlineNews,
+        ApiEndPoints.searchNewsList,
         queryParameters: {
-          'topic': topic,
-          'limit': 500,
-          'country': 'US',
-          'lang': 'en',
+          'q': topic,
         },
       );
       print("response data success************** ${response.data}");
@@ -84,18 +97,8 @@ class NewsApiServices {
       final response = await  dioClient.dio.get(
         ApiEndPoints.searchNewsList,
         queryParameters: {
-          'query': query,
-          'limit': 500,
-          'time_published': 'anytime',
-          'country': 'US',
-          'lang': 'en',
+          'q': query,
         },
-        options: Options(
-          headers: {
-            'x-rapidapi-host': BaseStrings.hosting,
-            'x-rapidapi-key': BaseStrings.apiKey,
-          },
-        ),
       );
       if (response.statusCode == 200) {
         return TopHeadlines.fromJson(response.data);
@@ -144,11 +147,10 @@ class DioClient {
     _dio = Dio(
       BaseOptions(
         baseUrl: BaseStrings.baseUrl,
-        headers: {
-          'x-rapidapi-key': BaseStrings.apiKey,
-          'x-rapidapi-host': BaseStrings.hosting,
+        queryParameters: {
+          'apiKey':BaseStrings.apiKey,
         },
-        connectTimeout: const Duration(seconds: 15),
+        connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
       ),
     );

@@ -101,25 +101,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         )
                       : newsController.results.isNotEmpty ?
-              ListView.builder(
-                          itemCount: newsController.results.length,
-                          itemBuilder: (context, index) {
-                            final article = newsController.results[index];
-                            final date = DateTime.parse(newsController
-                                .results[index].publishedDatetimeUtc
-                                .toString());
-                            String formattedDate =
-                                DateFormat('EEEE, d MMMM yyyy').format(date);
-                            return
-                                 newsCardWidgets(
-                                    imageUrl: article.photoUrl,
-                                    author: article.sourceName ?? "",
-                                    date: formattedDate.toString() ?? "",
-                                    title: article.title ?? "",
-                                  ).paddingSymmetric(horizontal: 15);
-
-                          },
-                        )  : const Center(
+              SizedBox(
+                height: 880.h,
+                child: ListView.builder(
+                            itemCount: newsController.results.length,
+                            itemBuilder: (context, index) {
+                              final article = newsController.results[index];
+                              final date = DateTime.parse(newsController
+                                  .results[index].publishedAt
+                                  .toString());
+                              String formattedDate =
+                                  DateFormat('EEEE, d MMMM yyyy').format(date);
+                              return
+                                   newsCardWidgets(
+                                      imageUrl: article.urlToImage ??"",
+                                      author: article.author?? "",
+                                      date: formattedDate.toString() ?? "",
+                                      title: article.title ?? "",
+                                    ).paddingSymmetric(horizontal: 15);
+                
+                            },
+                          ),
+              )  : const Center(
 heightFactor: 30,
                 child: Text(BaseStrings.noDataFound),
               )
@@ -252,95 +255,103 @@ heightFactor: 30,
                                   ),
                                 ).paddingSymmetric(vertical: 60)
                               : newsController.topicHeadline.isNotEmpty
-                                  ? Expanded(
-                                      child: ListView.builder(
-                                        itemCount:
-                                            newsController.topicHeadline.length,
-                                        itemBuilder: (context, index) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              Get.toNamed(
-                                                  BaseRoute.newsDetailsScreen,
-                                                  arguments: newsController
-                                                      .topicHeadline[index]);
-                                            },
-                                            child: Container(
-                                              width: 345,
-                                              height: 128,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                image: DecorationImage(
-                                                  onError:
-                                                      (exception, stackTrace) =>
-                                                          Image.asset(
-                                                              BaseAssets.topNews),
-                                                  image: NetworkImage(
-                                                      newsController
-                                                              .topicHeadline[
-                                                                  index]
-                                                              .photoUrl ??
-                                                          ""),
-                                                  // Replace with your image asset
-                                                  fit: BoxFit.cover,
-                                                ),
+                                  ? SizedBox(
+                            height: 800.h,
+                                    child: ListView.builder(
+                                      itemCount:
+                                          newsController.topicHeadline.length,
+                                      itemBuilder: (context, index) {
+                                        String formattedDate =
+                                        DateFormat('EEEE, d MMMM yyyy').format(DateTime.parse(newsController
+                                            .topicHeadline[index].publishedAt.toString()));
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Get.toNamed(
+                                                BaseRoute.newsDetailsScreen,
+                                                arguments: newsController
+                                                    .topicHeadline[index]);
+                                          },
+                                          child: Container(
+                                            width: 345,
+                                            height: 128,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              image: DecorationImage(
+                                                onError:
+                                                    (exception, stackTrace) =>
+                                                        Image.asset(
+                                                            BaseAssets.topNews),
+                                                image: NetworkImage(
+                                                    newsController
+                                                            .topicHeadline[
+                                                                index]
+                                                            .urlToImage ??
+                                                        ""),
+                                                // Replace with your image asset
+                                                fit: BoxFit.cover,
                                               ),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned(
-                                                      top: 10,
-                                                      left: 10,
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 300.w,
-                                                            child: Text(
-                                                              maxLines: 3,
-                                                              newsController
-                                                                      .topicHeadline[
-                                                                          index]
-                                                                      .title ??
-                                                                  "",
-                                                              style: TextStyle(
-                                                                color:
-                                                                    Colors.white,
-                                                                fontSize: 14.sp,
-                                                              ),
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                Positioned(
+                                                    top: 10,
+                                                    left: 10,
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 300.w,
+                                                          child: Text(
+                                                            maxLines: 3,
+                                                            newsController
+                                                                    .topicHeadline[
+                                                                        index]
+                                                                    .title ??
+                                                                "",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 14.sp,
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),),
-                                                  const Positioned(
-                                                    bottom: 10,
-                                                    left: 10,
-                                                    child: Text(
-                                                      '',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 16,
-                                                      ),
+                                                        ),
+                                                      ],
+                                                    ),),
+                                                 Positioned(
+                                                  bottom: 10,
+                                                  left: 10,
+                                                  child: Text(
+                                                    newsController
+                                                        .topicHeadline[
+                                                    index]
+                                                        .author ??
+                                                        "",
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
-                                                  const Positioned(
-                                                    bottom: 10,
-                                                    right: 10,
-                                                    child: Text(
-                                                      'Sunday, 9 May 2021',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 16,
-                                                      ),
+                                                ),
+                                                 Positioned(
+                                                  bottom: 10,
+                                                  right: 10,
+                                                  child: Text(
+                                                    formattedDate ,
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                            ).paddingSymmetric(vertical: 8.0),
-                                          );
-                                        },
-                                      ),
-                                    )
+                                                ),
+                                              ],
+                                            ),
+                                          ).paddingSymmetric(vertical: 8.0),
+                                        );
+                                      },
+                                    ),
+                                  )
                                   : const Center(
                             heightFactor:16,
                                       child: Text(BaseStrings.noDataFound),

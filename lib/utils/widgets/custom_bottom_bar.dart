@@ -30,7 +30,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
         ],
       ),
       child: BottomNavigationBar(
-
         landscapeLayout: BottomNavigationBarLandscapeLayout.linear,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black,

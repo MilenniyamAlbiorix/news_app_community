@@ -35,14 +35,14 @@ class NewsController extends GetxController {
   var selectedCategory = 0.obs;
 
   var selectedChips = <String>[].obs;
-  RxList<Datum> topHeadlinesList = <Datum>[].obs;
+  RxList<Article> topHeadlinesList = <Article>[].obs;
   var errorMessage = ''.obs;
-  RxList<Datum> results = <Datum>[].obs;
-  RxList<Datum> topicHeadline = <Datum>[].obs;
-  // var topHeadLineDetails;
+  RxList<Article> results = <Article>[].obs;
+  RxList<Article> topicHeadline = <Article>[].obs;
+   var topHeadLineDetails;
 
   final GetStorage storage = GetStorage();
-  var items = <Datum>[].obs;
+  var items = <Article>[].obs;
 
   RxBool atEdge = false.obs;
   RxList<Widget> screens = [
@@ -64,7 +64,7 @@ class NewsController extends GetxController {
 
   @override
   void onInit() {
-    // initDataAndApi();
+     initDataAndApi();
     super.onInit();
     selectedIndexes.value = 0;
     if (kDebugMode) {
@@ -97,8 +97,8 @@ class NewsController extends GetxController {
 
     try {
       final response = await topHeadlineRepo.getTopHeadline();
-      if (response.data != null && (response.data ?? []).isNotEmpty) {
-        topHeadlinesList.addAll(response.data ?? []);
+      if (response.articles != null && (response.articles ?? []).isNotEmpty) {
+        topHeadlinesList.addAll(response.articles ?? []);
       }
       if (kDebugMode) {
         print("*********************************${topHeadlinesList.value}");
@@ -112,13 +112,13 @@ class NewsController extends GetxController {
       isTopicLoading.value = false;
       isLoading(false);
     }
-    // await fetchArticlesByCategory(categories[selectedCategory.value]);
+     await fetchArticlesByCategory(categories[selectedCategory.value],);
   }
 
   Future<void> searchNewsList(String query, BuildContext context) async {
     if (query.length < 3) {
       showDialog(
-        context: context,
+        context: Get.context!,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Warring'),
@@ -141,8 +141,8 @@ class NewsController extends GetxController {
       errorMessage('');
       try {
         final searchResults = await searchNewsRepo?.getSearchNewSList(query);
-        if (searchResults?.data != null) {
-          results.assignAll(searchResults?.data ?? []);
+        if (searchResults?.articles != null) {
+          results.assignAll(searchResults?.articles ?? []);
         } else {
           results.clear();
         }
@@ -152,20 +152,19 @@ class NewsController extends GetxController {
         isSearchLoading(false);
       }
     }
-
   }
 
   Future<void> fetchArticlesByCategory(String category) async {
     isTopicLoading(true);
-    topicHeadline.value.clear();
+    topicHeadline.clear();
     try {
       final headlines = await topHeadlineRepo.getTopicHeadline(category);
       if (kDebugMode) {
         print("${headlines} Hedlines");
       }
-      topicHeadline.value.clear();
-      if (headlines.data != null || (headlines.data ?? []).isNotEmpty) {
-        topicHeadline.addAll(headlines.data ?? []);
+      topicHeadline.clear();
+      if (headlines.articles != null || (headlines.articles ?? []).isNotEmpty) {
+        topicHeadline.addAll(headlines.articles ?? []);
       }
       if (kDebugMode) {
         print("-----------------------------------:${topicHeadline.value}");
@@ -183,11 +182,11 @@ class NewsController extends GetxController {
     }
   }
 
-  void addItem(List<Datum> newItems) {
+  void addItem(List<Article> newItems) {
     final List<dynamic> storedItems =
         storage.read<List<dynamic>>('items') ?? [];
-    final List<Datum> existingItems = storedItems.map((item) {
-      return Datum.fromJson(item as Map<String, dynamic>);
+    final List<Article> existingItems = storedItems.map((item) {
+      return Article.fromJson(item as Map<String, dynamic>);
     }).toList();
     existingItems.addAll(newItems);
     final List<Map<String, dynamic>> updatedItems = existingItems.map((item) {
@@ -201,8 +200,8 @@ class NewsController extends GetxController {
     final List<dynamic> storedItems =
         storage.read<List<dynamic>>('items') ?? [];
 
-    final List<Datum> itemsList = storedItems.map((item) {
-      return Datum.fromJson(item as Map<String, dynamic>);
+    final List<Article> itemsList = storedItems.map((item) {
+      return Article.fromJson(item as Map<String, dynamic>);
     }).toList();
 
     items.value.assignAll(itemsList);

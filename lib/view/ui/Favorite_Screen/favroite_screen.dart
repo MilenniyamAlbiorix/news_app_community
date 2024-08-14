@@ -56,7 +56,7 @@ class _FavroiteScreenState extends State<FavroiteScreen> {
               itemBuilder: (context, index) {
                 var item =  newsController.items[index];
                 return
-                  notificationListing(context: context,title:item.title, imageUrl: item.photoUrl);
+                  notificationListing(context: context,title:item.title, imageUrl: item. urlToImage ?? "");
               },
             ),
           )  : const Center(child: Text(BaseStrings.noDataFound,style: TextStyle(color: BaseColors.blackColors),)),
