@@ -29,8 +29,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
           ),
         ],
       ),
+      clipBehavior: Clip.hardEdge,
       child: BottomNavigationBar(
-        landscapeLayout: BottomNavigationBarLandscapeLayout.linear,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black,
         type: BottomNavigationBarType.fixed,

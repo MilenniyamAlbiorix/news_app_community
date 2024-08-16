@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:get/get_instance/get_instance.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app_community/view/ui/home_screen/topic_news_card_widget.dart';
 import 'package:news_app_community/viewModel/News%20Controller.dart';
@@ -92,10 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: SingleChildScrollView(
             child: Obx(
-              () => newsController.searchController.value.text.isNotEmpty
+              () => newsController.searchController.value.text.isNotEmpty && newsController.searchController.value.text.length >=3
                   ? newsController.isSearchLoading.value
-                      ? const Center(
-                          child: CupertinoActivityIndicator(
+                      ?  Center(
+                heightFactor: MediaQuery.of(context).size.height * 0.3,
+                          child: const CupertinoActivityIndicator(
                             color: BaseColors.newsbackbtnColor,
                             radius: 12,
                           ),
@@ -113,12 +113,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               String formattedDate =
                                   DateFormat('EEEE, d MMMM yyyy').format(date);
                               return
-                                   newsCardWidgets(
-                                      imageUrl: article.urlToImage ??"",
-                                      author: article.author?? "",
-                                      date: formattedDate.toString() ?? "",
-                                      title: article.title ?? "",
-                                    ).paddingSymmetric(horizontal: 15);
+                                   GestureDetector(
+                                     onTap: () => Get.toNamed(BaseRoute.newsDetailsScreen,arguments: newsController.results[index]),
+                                     child: newsCardWidgets(
+                                        imageUrl: article.urlToImage ??"",
+                                        author: article.author?? "",
+                                        date: formattedDate.toString() ?? "",
+                                        title: article.title ?? "",
+                                      ).paddingSymmetric(horizontal: 15),
+                                   );
                 
                             },
                           ),
@@ -154,7 +157,7 @@ heightFactor: 30,
                             ),
                             GestureDetector(
                               onTap: () async {
-                                // await newsController.fetchTopHeadline();
+
                                 Get.toNamed(
                                   BaseRoute.searchScreen,
                                 );
@@ -180,6 +183,7 @@ heightFactor: 30,
                         ),
                         10.toVSB,
                         SizedBox(height: 220.0.h,child: carouselSliderWidgets(),),
+                        10.toVSB,
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 0, vertical: 0),
@@ -245,6 +249,7 @@ heightFactor: 30,
                             ),
                           ),
                         ),
+                        8.toVSB,
                         Obx(
                           () => newsController.isTopicLoading.value
                               ? const Center(

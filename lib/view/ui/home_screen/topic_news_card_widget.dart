@@ -40,13 +40,13 @@ Widget newsCardWidgets(
               ],
             )),
          Positioned(
-          bottom: 50,
+          bottom: 10,
           left: 10,
           child: Text(
             author ??"",
             style:  TextStyle(
               color: Colors.white,
-              fontSize: 16.sp,
+              fontSize: 14.sp,
             ),
           ),
         ),
@@ -57,7 +57,7 @@ Widget newsCardWidgets(
             date ?? "",
             style: TextStyle(
               color: Colors.white,
-              fontSize: 16.sp,
+              fontSize: 14.sp,
             ),
           ),
         ),

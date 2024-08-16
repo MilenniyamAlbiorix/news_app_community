@@ -80,8 +80,10 @@ Widget filterListingView({required String? image ,required String title,required
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Flexible(
+                  SizedBox(
+                    width: 290.h,
                     child: Text(
+                      overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       title ?? "",
                       style: TextStyle(
@@ -97,9 +99,9 @@ Widget filterListingView({required String? image ,required String title,required
             left: 10,
             child: Text(
               author,
-              style: const TextStyle(
+              style:  TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 13.sp,
               ),
             ),
           ),
@@ -108,9 +110,9 @@ Widget filterListingView({required String? image ,required String title,required
             right: 10,
             child: Text(
               datE ?? "",
-              style: const TextStyle(
+              style:  TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 13.sp,
               ),
             ),
           ),

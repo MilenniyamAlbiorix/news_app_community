@@ -172,7 +172,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                             ),
                           ),
                           TextSpan(
-                            text: newsController.topHeadLineDetails.description,
+                            text: newsController.topHeadLineDetails.description ?? "NO description",
                           ),
                         ],
                       ),
@@ -419,7 +419,7 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
                       child: Image.network(
                         newsController.topHeadLineDetails.urlToImage ?? "",
                         errorBuilder: (context, error, stackTrace) =>
-                            Image.asset(BaseAssets.group),
+                            Image.asset(BaseAssets.topNews,fit: BoxFit.cover,),
                         fit: BoxFit.cover,
                       ),
                     ),

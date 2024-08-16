@@ -116,7 +116,7 @@ class NewsController extends GetxController {
   }
 
   Future<void> searchNewsList(String query, BuildContext context) async {
-    if (query.length < 3) {
+    if (query.length <= 3) {
       showDialog(
         context: Get.context!,
         builder: (BuildContext context) {
